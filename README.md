@@ -1,4 +1,4 @@
-put your UČOs (and names) on this line (no exact format required)
+521569 - Denis Balogh
 
 ## PV021 project -- Deep Learning from Scratch
 
