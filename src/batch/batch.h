@@ -7,6 +7,8 @@
 
 #include "../matrix/matrix.h"
 
+#define BATCH_SIZE 32
+
 using namespace std;
 
 class Batch {

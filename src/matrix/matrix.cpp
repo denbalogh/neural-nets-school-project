@@ -1,7 +1,6 @@
 #include "matrix.h"
 
-// My laptop has 6 cores
-int Matrix::MAX_THREADS = 6;
+int Matrix::MAX_THREADS;
 
 void Matrix::setMaxThreads(int max_threads){
     Matrix::MAX_THREADS = max_threads;

@@ -1,6 +1,16 @@
 #include "data_loader.h"
 
-DataLoader::DataLoader(string filenameX, string filenameY) {
+DataLoader::DataLoader(DataType type) {
+    string filenameX, filenameY;
+
+    if(type == TEST) {
+        filenameX = "../data/fashion_mnist_test_vectors.csv";
+        filenameY = "../data/fashion_mnist_test_labels.csv";
+    } else {
+        filenameX = "../data/fashion_mnist_train_vectors.csv";
+        filenameY = "../data/fashion_mnist_train_labels.csv";
+    }
+
     ifstream fileX(filenameX), fileY(filenameY);
     string line;
 
@@ -8,9 +18,6 @@ DataLoader::DataLoader(string filenameX, string filenameY) {
         while(getline(fileX, line)) {
             dataX.push_back(line);
         }
-
-        // Get the number of items in each data row
-        itemSize = count(dataX[0].begin(), dataX[0].end(), ',') + 1;
     } else {
         throw invalid_argument("File for X not found");
     }
@@ -27,36 +34,24 @@ DataLoader::DataLoader(string filenameX, string filenameY) {
     fileY.close();
 }
 
-int DataLoader::getNumberOfItems() {
-    return dataX.size();
-}
-
-int DataLoader::getItemSize() {
-    return itemSize;
-}
-
-Batch DataLoader::getBatch(int batchSize) {
-    if(batchSize > dataX.size()) {
-        throw invalid_argument("Batch size is larger than the number of items");
-    }
-
+Batch DataLoader::getBatch() {
     vector<string> batchX;
     vector<int> batchY;
 
-    for(int i = 0; i < batchSize; i++) {
+    for(int i = 0; i < BATCH_SIZE; i++) {
         int index = rand() % dataX.size();
         batchX.push_back(dataX[index]);
         batchY.push_back(dataY[index]);
     }
 
-    Matrix data = Matrix(batchSize, itemSize, ZEROS);
+    Matrix data = Matrix(BATCH_SIZE, ITEM_SIZE, ZEROS);
     vector<int> labels = batchY;
 
-    for(int i = 0; i < batchSize; i++) {
+    for(int i = 0; i < BATCH_SIZE; i++) {
         string line = batchX[i];
         int j = 0;
         stringstream ssin(line);
-        while(ssin.good() && j < itemSize) {
+        while(ssin.good() && j < ITEM_SIZE) {
             string value;
             getline(ssin, value, ',');
             data.setValue(i, j, stod(value));
