@@ -1,6 +1,8 @@
 #include <iostream>
 #include <chrono>
 #include "matrix/matrix.h"
+#include "data_loader/data_loader.h"
+#include "batch/batch.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -12,29 +14,29 @@ int main(int argc, char** argv) {
         Matrix::setMaxThreads(128);
     }
 
-    cout << "Matmul efficiency test:" << endl;
-    for(int i = 10; i <= 1000; i += 50) {
-        Matrix A = Matrix(i, i, RAND);
-        cout << "Matrix shape: " << A.getShape() << endl;
+    // cout << "Matmul efficiency test:" << endl;
+    // for(int i = 10; i <= 1000; i += 50) {
+    //     Matrix A = Matrix(i, i, RAND);
+    //     cout << "Matrix shape: " << A.getShape() << endl;
 
-        auto start = high_resolution_clock::now();
-        Matrix B = A.matmul(A);
-        auto stop = high_resolution_clock::now();
-        auto duration = duration_cast<microseconds>(stop - start);
-        cout << "Elapsed time REGULAR: " << duration.count() << "ms" << endl;
+    //     auto start = high_resolution_clock::now();
+    //     Matrix B = A.matmul(A);
+    //     auto stop = high_resolution_clock::now();
+    //     auto duration = duration_cast<microseconds>(stop - start);
+    //     cout << "Elapsed time REGULAR: " << duration.count() << "ms" << endl;
 
-        start = high_resolution_clock::now();
-        Matrix C = A.matmul_parallel(A);
-        stop = high_resolution_clock::now();
-        duration = duration_cast<microseconds>(stop - start);
-        cout << "Elapsed time PARALLEL: " << duration.count() << "ms" << endl;
+    //     start = high_resolution_clock::now();
+    //     Matrix C = A.matmulParallel(A);
+    //     stop = high_resolution_clock::now();
+    //     duration = duration_cast<microseconds>(stop - start);
+    //     cout << "Elapsed time PARALLEL: " << duration.count() << "ms" << endl;
 
-        if(B.compareValues(C)){
-            cout << "They are the SAME" << endl;
-        } else {
-            cout << "They are NOT the SAME" << endl;
-        }
-    }
+    //     if(B.compareValues(C)){
+    //         cout << "They are the SAME" << endl;
+    //     } else {
+    //         cout << "They are NOT the SAME" << endl;
+    //     }
+    // }
 
     // Matrix A = Matrix(100, 100, RAND);
 
@@ -51,6 +53,13 @@ int main(int argc, char** argv) {
     // matmul_parallel.printValues();
     // cout << endl << "Regular:" << endl;
     // matmul.printValues();
+
+    DataLoader loader = DataLoader("../data/fashion_mnist_train_vectors.csv", "../data/fashion_mnist_train_labels.csv");
+
+    Batch batch = loader.getBatch(5);
+
+    cout << "Batch data:" << endl;
+    batch.getData().printValues();
 
     return 0;
 }

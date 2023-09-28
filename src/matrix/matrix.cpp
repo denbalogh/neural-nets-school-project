@@ -30,6 +30,12 @@ int Matrix::getCols() {
     return cols;
 }
 
+Matrix::Matrix() {
+    rows = 0;
+    cols = 0;
+    data = NULL;
+}
+
 Matrix::Matrix(int r, int c, MatrixType type) {
     if(r < 1 || c < 1) {
         throw invalid_argument("Matrix dimensions must be positive");
@@ -153,7 +159,7 @@ Matrix Matrix::matmul(Matrix& other) {
     return result;
 }
 
-void matmul_thread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_num, Matrix& result){
+void matmulThread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_num, Matrix& result){
     for(int i = 0; i < ops_num; i++){
         int row = row_start + (col_start + i) / B.getCols();
         int col = (col_start + i) % B.getCols();
@@ -167,13 +173,13 @@ void matmul_thread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_n
     }
 }
 
-Matrix Matrix::matmul_parallel(Matrix& other){
+Matrix Matrix::matmulParallel(Matrix& other){
     if(cols != other.rows) {
         throw invalid_argument("Matmul A @ B: cols of A must match rows of B");
     }
 
     Matrix result(rows, other.cols);
-    thread threads[MAX_THREADS];
+    vector<thread> threads;
 
     const int ops = getRows() * other.getCols();
     const int ops_per_thread = ops / MAX_THREADS;
@@ -186,7 +192,7 @@ Matrix Matrix::matmul_parallel(Matrix& other){
         int row_start = i == 0 ? 0 : ops_done / other.getCols();
         int col_start = i == 0 ? 0 : ops_done % other.getCols();
 
-        threads[i] = thread(matmul_thread, ref(*this), ref(other), row_start, col_start, ops_actual, ref(result));
+        threads.push_back(thread(matmulThread, ref(*this), ref(other), row_start, col_start, ops_actual, ref(result)));
         ops_done += ops_actual;
     }
 

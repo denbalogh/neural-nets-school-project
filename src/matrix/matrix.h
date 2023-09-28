@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <string>
+#include <vector>
 #include <thread>
 
 using namespace std;
@@ -27,6 +28,7 @@ class Matrix {
         static void setMaxThreads(int max_threads);
         int getRows();
         int getCols();
+        Matrix();
         Matrix(int rows, int cols, MatrixType type = ZEROS);
         double getValue(int row, int col);
         void setValue(int row, int col, double value);
@@ -39,9 +41,9 @@ class Matrix {
         void initRand();
         // Operations
         Matrix matmul(Matrix& other);
-        Matrix matmul_parallel(Matrix& other);
+        Matrix matmulParallel(Matrix& other);
 };
 
-void matmul_thread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_num, Matrix& result);
+void matmulThread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_num, Matrix& result);
 
 #endif
