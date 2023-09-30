@@ -3,6 +3,7 @@
 #include "matrix/matrix.h"
 #include "data_loader/data_loader.h"
 #include "batch/batch.h"
+#include "loss/loss.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -22,6 +23,7 @@ int main(int argc, char** argv) {
 
     Batch batch = loader.getBatch();
     Matrix x = batch.getData();
+    vector<int> y = batch.getLabels();
 
     cout << "Batch loaded" << endl;
 
@@ -45,6 +47,10 @@ int main(int argc, char** argv) {
 
     cout << "Layer 2 output: " << endl;
     l2.printValues();
+
+    double loss = crossEntropy(l2, y);
+
+    cout << "Loss: " << loss << endl;
 
     return 0;
 }

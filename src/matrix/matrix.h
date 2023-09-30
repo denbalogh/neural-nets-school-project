@@ -41,6 +41,20 @@ class Matrix {
         // Operations
         Matrix matmul(Matrix& other);
         Matrix operator+(Matrix& other);
+        Matrix operator+(double value);
+        Matrix operator-(Matrix& other);
+        Matrix operator-(double value);
+        Matrix operator*(Matrix& other);
+        Matrix operator*(double value);
+        Matrix operator/(Matrix& other);
+        Matrix operator/(double value);
+        Matrix pow(double power);
+        Matrix exp();
+        Matrix log();
+        Matrix sum(int dim);
+        Matrix max(int dim);
+        Matrix mean(int dim);
+        Matrix transpose();
         Matrix relu();
         Matrix softmax();
 };
