@@ -5,13 +5,13 @@
 #include <string>
 #include <vector>
 #include <thread>
+#include <cmath>
 
 using namespace std;
 
 enum MatrixType {
     ZEROS,
     ONES,
-    EYE,
     RAND
 };
 
@@ -25,11 +25,11 @@ class Matrix {
         static int MAX_THREADS;
 
     public:
+        Matrix();
+        Matrix(int rows, int cols, MatrixType type = ZEROS);
         static void setMaxThreads(int max_threads);
         int getRows();
         int getCols();
-        Matrix();
-        Matrix(int rows, int cols, MatrixType type = ZEROS);
         double getValue(int row, int col);
         void setValue(int row, int col, double value);
         string getShape();
@@ -37,11 +37,12 @@ class Matrix {
         bool compareValues(Matrix& other);
         void initZeros();
         void initOnes();
-        void initEye();
         void initRand();
         // Operations
         Matrix matmul(Matrix& other);
-        Matrix matmulParallel(Matrix& other);
+        Matrix operator+(Matrix& other);
+        Matrix relu();
+        Matrix softmax();
 };
 
 void matmulThread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_num, Matrix& result);

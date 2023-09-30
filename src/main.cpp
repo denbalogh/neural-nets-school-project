@@ -16,12 +16,35 @@ int main(int argc, char** argv) {
         Matrix::setMaxThreads(6);
     }
 
-    DataLoader test_loader = DataLoader(TEST);
+    DataLoader loader = DataLoader(TRAIN);
 
-    Batch batch = test_loader.getBatch();
+    cout << "Data loaded" << endl;
 
-    cout << "Batch shape:" << endl;
-    cout << batch.getData().getShape() << endl;
+    Batch batch = loader.getBatch();
+    Matrix x = batch.getData();
+
+    cout << "Batch loaded" << endl;
+
+    int hidden_size = 32;
+
+    Matrix W1 = Matrix(ITEM_SIZE, hidden_size, RAND);
+    Matrix b1 = Matrix(1, hidden_size, RAND);
+
+    Matrix W2 = Matrix(hidden_size, 10, RAND);
+    Matrix b2 = Matrix(1, 10, RAND);
+
+    Matrix l1 = x.matmul(W1) + b1;
+    l1 = l1.relu();
+
+    cout << "Layer 1 output: " << endl;
+    l1.printValues();
+
+    Matrix l2 = l1.matmul(W2) + b2;
+
+    l2 = l2.softmax();
+
+    cout << "Layer 2 output: " << endl;
+    l2.printValues();
 
     return 0;
 }

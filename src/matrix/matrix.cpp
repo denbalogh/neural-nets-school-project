@@ -1,5 +1,6 @@
 #include "matrix.h"
 
+// static variables and functions
 int Matrix::MAX_THREADS;
 
 void Matrix::setMaxThreads(int max_threads){
@@ -14,12 +15,10 @@ void Matrix::checkBounds(int r, int c, string message) {
 }
 
 void Matrix::checkDimensions(Matrix& other) {
-    if(rows != other.rows || cols != other.cols) {
+    if(rows != other.getRows() || cols != other.getCols()) {
         throw invalid_argument("Matrix dimensions must match");
     }
 }
-
-// public functions
 
 int Matrix::getRows() {
     return rows;
@@ -48,9 +47,6 @@ Matrix::Matrix(int r, int c, MatrixType type) {
         case ONES:
             initOnes();
             break;
-        case EYE:
-            initEye();
-            break;
         case RAND:
             initRand();
             break;
@@ -75,24 +71,13 @@ void Matrix::initOnes() {
     }
 }
 
-void Matrix::initEye() {
-    if(rows != cols) {
-        throw invalid_argument("Matrix must be square");
-    }
-
-    initZeros();
-
-    for(int i = 0; i < rows; i++) {
-        setValue(i, i, 1.0);
-    }
-}
-
 void Matrix::initRand() {
     srand(time(NULL));
 
+    // initialize random values between -0.01 and 0.01
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
-            setValue(r, c, (double) rand() / RAND_MAX);
+            setValue(r, c, (double)rand() / RAND_MAX * 0.02 - 0.01);
         }
     }
 }
@@ -121,7 +106,7 @@ void Matrix::printValues() {
 }
 
 bool Matrix::compareValues(Matrix& other) {
-    if(rows != other.rows || cols != other.cols) {
+    if(rows != other.getRows() || cols != other.getCols()) {
         return false;
     }
 
@@ -134,28 +119,6 @@ bool Matrix::compareValues(Matrix& other) {
     }
 
     return true;
-}
-
-Matrix Matrix::matmul(Matrix& other) {
-    if(cols != other.rows) {
-        throw invalid_argument("Matmul A @ B: cols of A must match rows of B");
-    }
-
-    Matrix result(rows, other.cols);
-
-    for(int r = 0; r < rows; r++) {
-        for(int c = 0; c < other.cols; c++) {
-            double sum = 0.0;
-
-            for(int i = 0; i < cols; i++) {
-                sum += getValue(r, i) * other.getValue(i, c);
-            }
-
-            result.setValue(r, c, sum);
-        }
-    }
-
-    return result;
 }
 
 void matmulThread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_num, Matrix& result){
@@ -172,12 +135,12 @@ void matmulThread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_nu
     }
 }
 
-Matrix Matrix::matmulParallel(Matrix& other){
-    if(cols != other.rows) {
+Matrix Matrix::matmul(Matrix& other){
+    if(cols != other.getRows()) {
         throw invalid_argument("Matmul A @ B: cols of A must match rows of B");
     }
 
-    Matrix result(rows, other.cols);
+    Matrix result(rows, other.getCols());
     vector<thread> threads;
 
     const int ops = getRows() * other.getCols();
@@ -199,5 +162,76 @@ Matrix Matrix::matmulParallel(Matrix& other){
         threads[i].join();
     }
     
+    return result;
+}
+
+Matrix Matrix::operator+(Matrix& other){
+    // Adding a row vector, need to broadcast
+    if(other.getRows() == 1){
+        if(other.getCols() != cols){
+            throw invalid_argument("When adding a vector to matrix, cols must match");
+        }
+
+        Matrix result(rows, cols);
+
+        for(int r = 0; r < rows; r++){
+            for(int c = 0; c < cols; c++){
+                result.setValue(r, c, getValue(r, c) + other.getValue(0, c));
+            }
+        }
+
+        return result;
+    }
+
+    // Adding a matrix
+    checkDimensions(other);
+
+    Matrix result(rows, cols);
+
+    for(int r = 0; r < rows; r++){
+        for(int c = 0; c < cols; c++){
+            result.setValue(r, c, getValue(r, c) + other.getValue(r, c));
+        }
+    }
+
+    return result;
+}
+
+Matrix Matrix::relu(){
+    Matrix result(rows, cols);
+
+    for(int r = 0; r < rows; r++){
+        for(int c = 0; c < cols; c++){
+            result.setValue(r, c, getValue(r, c) > 0.0 ? getValue(r, c) : 0.0);
+        }
+    }
+
+    return result;
+}
+
+Matrix Matrix::softmax(){
+    Matrix result(rows, cols);
+
+    for(int r = 0; r < rows; r++){
+        double max = 0.0;
+
+        for(int c = 0; c < cols; c++){
+            if(getValue(r, c) > max){
+                max = getValue(r, c);
+            }
+        }
+
+        double sum = 0.0;
+
+        for(int c = 0; c < cols; c++){
+            // Subtract max to avoid overflow
+            sum += exp(getValue(r, c) - max);
+        }
+
+        for(int c = 0; c < cols; c++){
+            result.setValue(r, c, exp(getValue(r, c) - max) / sum);
+        }
+    }
+
     return result;
 }
