@@ -30,8 +30,8 @@ class Matrix {
         static void setMaxThreads(int max_threads);
         int getRows();
         int getCols();
-        double getValue(int row, int col);
-        void setValue(int row, int col, double value);
+        double get(int row, int col);
+        void set(int row, int col, double value);
         string getShape();
         void printValues();
         bool compareValues(Matrix& other);
@@ -55,7 +55,7 @@ class Matrix {
         Matrix max(int dim);
         Matrix mean(int dim);
         Matrix transpose();
-        Matrix relu();
+        Matrix tanh();
         Matrix softmax();
 };
 

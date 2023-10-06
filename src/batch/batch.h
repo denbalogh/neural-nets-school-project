@@ -7,7 +7,7 @@
 
 #include "../matrix/matrix.h"
 
-#define BATCH_SIZE 32
+#define BATCH_SIZE 64
 
 using namespace std;
 

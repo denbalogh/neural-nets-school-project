@@ -54,7 +54,7 @@ Batch DataLoader::getBatch() {
         while(ssin.good() && j < ITEM_SIZE) {
             string value;
             getline(ssin, value, ',');
-            data.setValue(i, j, stod(value));
+            data.set(i, j, stod(value));
             j++;
         }
     }

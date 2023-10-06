@@ -58,7 +58,7 @@ Matrix::Matrix(int r, int c, MatrixType type) {
 void Matrix::initZeros() {
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
-            setValue(r, c, 0.0);
+            set(r, c, 0.0);
         }
     }
 }
@@ -66,7 +66,7 @@ void Matrix::initZeros() {
 void Matrix::initOnes() {
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
-            setValue(r, c, 1.0);
+            set(r, c, 1.0);
         }
     }
 }
@@ -77,17 +77,17 @@ void Matrix::initRand() {
     // initialize random values between -0.01 and 0.01
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
-            setValue(r, c, (double)rand() / RAND_MAX * 0.02 - 0.01);
+            set(r, c, (double)rand() / RAND_MAX * 0.02 - 0.01);
         }
     }
 }
 
-double Matrix::getValue(int r, int c) {
+double Matrix::get(int r, int c) {
     checkBounds(r, c, "getValue: " + to_string(r) + ", " + to_string(c));
     return data[r * cols + c];
 }
 
-void Matrix::setValue(int r, int c, double value) {
+void Matrix::set(int r, int c, double value) {
     checkBounds(r, c, "setValue: " + to_string(r) + ", " + to_string(c));
     data[r * cols + c] = value;
 }
@@ -99,7 +99,7 @@ string Matrix::getShape() {
 void Matrix::printValues() {
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
-            cout << getValue(r, c) << " ";
+            cout << get(r, c) << " ";
         }
         cout << endl;
     }
@@ -112,7 +112,7 @@ bool Matrix::compareValues(Matrix& other) {
 
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
-            if(getValue(r, c) != other.getValue(r, c)) {
+            if(get(r, c) != other.get(r, c)) {
                 return false;
             }
         }
@@ -128,10 +128,10 @@ void matmulThread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_nu
         double sum = 0.0;
 
         for(int j = 0; j < A.getCols(); j++){
-            sum += A.getValue(row, j) * B.getValue(j, col);
+            sum += A.get(row, j) * B.get(j, col);
         }
 
-        result.setValue(row, col, sum);
+        result.set(row, col, sum);
     }
 }
 
@@ -176,7 +176,7 @@ Matrix Matrix::operator+(Matrix& other){
 
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                result.setValue(r, c, getValue(r, c) + other.getValue(0, c));
+                result.set(r, c, get(r, c) + other.get(0, c));
             }
         }
 
@@ -193,7 +193,7 @@ Matrix Matrix::operator+(Matrix& other){
 
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                result.setValue(r, c, getValue(r, c) + other.getValue(r, 0));
+                result.set(r, c, get(r, c) + other.get(r, 0));
             }
         }
 
@@ -207,7 +207,7 @@ Matrix Matrix::operator+(Matrix& other){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, getValue(r, c) + other.getValue(r, c));
+            result.set(r, c, get(r, c) + other.get(r, c));
         }
     }
 
@@ -219,7 +219,7 @@ Matrix Matrix::operator+(double value){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, getValue(r, c) + value);
+            result.set(r, c, get(r, c) + value);
         }
     }
 
@@ -237,7 +237,7 @@ Matrix Matrix::operator-(Matrix& other){
 
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                result.setValue(r, c, getValue(r, c) - other.getValue(0, c));
+                result.set(r, c, get(r, c) - other.get(0, c));
             }
         }
 
@@ -254,7 +254,7 @@ Matrix Matrix::operator-(Matrix& other){
 
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                result.setValue(r, c, getValue(r, c) - other.getValue(r, 0));
+                result.set(r, c, get(r, c) - other.get(r, 0));
             }
         }
 
@@ -268,7 +268,7 @@ Matrix Matrix::operator-(Matrix& other){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, getValue(r, c) - other.getValue(r, c));
+            result.set(r, c, get(r, c) - other.get(r, c));
         }
     }
 
@@ -280,7 +280,7 @@ Matrix Matrix::operator-(double value){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, getValue(r, c) - value);
+            result.set(r, c, get(r, c) - value);
         }
     }
 
@@ -298,7 +298,7 @@ Matrix Matrix::operator*(Matrix& other){
 
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                result.setValue(r, c, getValue(r, c) * other.getValue(0, c));
+                result.set(r, c, get(r, c) * other.get(0, c));
             }
         }
 
@@ -315,7 +315,7 @@ Matrix Matrix::operator*(Matrix& other){
 
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                result.setValue(r, c, getValue(r, c) * other.getValue(r, 0));
+                result.set(r, c, get(r, c) * other.get(r, 0));
             }
         }
 
@@ -328,7 +328,7 @@ Matrix Matrix::operator*(Matrix& other){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, getValue(r, c) * other.getValue(r, c));
+            result.set(r, c, get(r, c) * other.get(r, c));
         }
     }
 
@@ -340,7 +340,7 @@ Matrix Matrix::operator*(double value){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, getValue(r, c) * value);
+            result.set(r, c, get(r, c) * value);
         }
     }
 
@@ -358,7 +358,7 @@ Matrix Matrix::operator/(Matrix& other){
 
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                result.setValue(r, c, getValue(r, c) / other.getValue(0, c));
+                result.set(r, c, get(r, c) / other.get(0, c));
             }
         }
 
@@ -375,7 +375,7 @@ Matrix Matrix::operator/(Matrix& other){
 
         for(int r = 0; r < rows; r++){
             for(int c = 0; c < cols; c++){
-                result.setValue(r, c, getValue(r, c) / other.getValue(r, 0));
+                result.set(r, c, get(r, c) / other.get(r, 0));
             }
         }
 
@@ -388,7 +388,7 @@ Matrix Matrix::operator/(Matrix& other){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, getValue(r, c) / other.getValue(r, c));
+            result.set(r, c, get(r, c) / other.get(r, c));
         }
     }
 
@@ -400,7 +400,7 @@ Matrix Matrix::operator/(double value){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, getValue(r, c) / value);
+            result.set(r, c, get(r, c) / value);
         }
     }
 
@@ -412,7 +412,7 @@ Matrix Matrix::pow(double power){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, std::pow(getValue(r, c), power));
+            result.set(r, c, std::pow(get(r, c), power));
         }
     }
 
@@ -424,7 +424,7 @@ Matrix Matrix::exp(){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, std::exp(getValue(r, c)));
+            result.set(r, c, std::exp(get(r, c)));
         }
     }
 
@@ -436,7 +436,7 @@ Matrix Matrix::log(){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, std::log(getValue(r, c)));
+            result.set(r, c, std::log(get(r, c)));
         }
     }
 
@@ -451,10 +451,10 @@ Matrix Matrix::sum(int dim){
             double sum = 0.0;
 
             for(int r = 0; r < rows; r++){
-                sum += getValue(r, c);
+                sum += get(r, c);
             }
 
-            result.setValue(0, c, sum);
+            result.set(0, c, sum);
         }
 
         return result;
@@ -465,10 +465,10 @@ Matrix Matrix::sum(int dim){
             double sum = 0.0;
 
             for(int c = 0; c < cols; c++){
-                sum += getValue(r, c);
+                sum += get(r, c);
             }
 
-            result.setValue(r, 0, sum);
+            result.set(r, 0, sum);
         }
 
         return result;
@@ -482,15 +482,15 @@ Matrix Matrix::max(int dim){
         Matrix result(1, cols);
 
         for(int c = 0; c < cols; c++){
-            double max = getValue(0, c);
+            double max = get(0, c);
 
             for(int r = 1; r < rows; r++){
-                if(getValue(r, c) > max){
-                    max = getValue(r, c);
+                if(get(r, c) > max){
+                    max = get(r, c);
                 }
             }
 
-            result.setValue(0, c, max);
+            result.set(0, c, max);
         }
 
         return result;
@@ -498,15 +498,15 @@ Matrix Matrix::max(int dim){
         Matrix result(rows, 1);
 
         for(int r = 0; r < rows; r++){
-            double max = getValue(r, 0);
+            double max = get(r, 0);
 
             for(int c = 1; c < cols; c++){
-                if(getValue(r, c) > max){
-                    max = getValue(r, c);
+                if(get(r, c) > max){
+                    max = get(r, c);
                 }
             }
 
-            result.setValue(r, 0, max);
+            result.set(r, 0, max);
         }
 
         return result;
@@ -530,19 +530,19 @@ Matrix Matrix::transpose(){
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(c, r, getValue(r, c));
+            result.set(c, r, get(r, c));
         }
     }
 
     return result;
 }
 
-Matrix Matrix::relu(){
+Matrix Matrix::tanh(){
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
         for(int c = 0; c < cols; c++){
-            result.setValue(r, c, getValue(r, c) > 0.0 ? getValue(r, c) : 0.0);
+            result.set(r, c, std::tanh(get(r, c)));
         }
     }
 

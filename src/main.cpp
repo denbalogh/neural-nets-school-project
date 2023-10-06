@@ -19,15 +19,8 @@ int main(int argc, char** argv) {
 
     DataLoader loader = DataLoader(TRAIN);
 
-    cout << "Data loaded" << endl;
-
-    Batch batch = loader.getBatch();
-    Matrix x = batch.getData();
-    vector<int> y = batch.getLabels();
-
-    cout << "Batch loaded" << endl;
-
     int hidden_size = 32;
+    double lr = 0.01;
 
     Matrix W1 = Matrix(ITEM_SIZE, hidden_size, RAND);
     Matrix b1 = Matrix(1, hidden_size, RAND);
@@ -35,22 +28,48 @@ int main(int argc, char** argv) {
     Matrix W2 = Matrix(hidden_size, 10, RAND);
     Matrix b2 = Matrix(1, 10, RAND);
 
-    Matrix l1 = x.matmul(W1) + b1;
-    l1 = l1.relu();
+    for(int i = 0; i < 1000; i++){
+        Batch batch = loader.getBatch();
+        Matrix x = batch.getData();
+        vector<int> y = batch.getLabels();
 
-    cout << "Layer 1 output: " << endl;
-    l1.printValues();
+        // Forward pass
+        Matrix hpreact = x.matmul(W1) + b1;
+        Matrix h = hpreact.tanh();
+        Matrix logits = h.matmul(W2) + b2;
+        Matrix probs = logits.softmax();
+        double loss = crossEntropy(probs, y);
 
-    Matrix l2 = l1.matmul(W2) + b2;
+        cout << "Loss: " << loss << endl;
 
-    l2 = l2.softmax();
+        //Backward pass
+        Matrix dlogits = crossEntropyGrad(logits, y);
 
-    cout << "Layer 2 output: " << endl;
-    l2.printValues();
+        Matrix W2T = W2.transpose();
+        Matrix dh = dlogits.matmul(W2T);
 
-    double loss = crossEntropy(l2, y);
+        Matrix dW2 = h.transpose().matmul(dlogits);
+        Matrix db2 = dlogits.sum(0);
 
-    cout << "Loss: " << loss << endl;
+        Matrix hAsOnes = Matrix(h.getRows(), h.getCols(), ONES);
+        Matrix hPow2 = h.pow(2);
+        Matrix hAsOnesMinusHPow2 = hAsOnes - hPow2;
+        Matrix dhpreact = dh * hAsOnesMinusHPow2;
+
+        Matrix dW1 = x.transpose().matmul(dhpreact);
+        Matrix db1 = dhpreact.sum(0);
+
+        // Update weights
+        dW1 = dW1 * lr;
+        db1 = db1 * lr;
+        dW2 = dW2 * lr;
+        db2 = db2 * lr;
+
+        W1 = W1 - dW1;
+        b1 = b1 - db1;
+        W2 = W2 - dW2;
+        b2 = b2 - db2;
+    }
 
     return 0;
 }

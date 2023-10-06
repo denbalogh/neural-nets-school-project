@@ -6,10 +6,24 @@ double crossEntropy(Matrix& y, vector<int> y_hat) {
     for(int r = 0; r < y.getRows(); r++) {
         for(int c = 0; c < y.getCols(); c++) {
             if(y_hat[r] == c) {
-                loss.setValue(r, 0, -log(y.getValue(r, c)));
+                loss.set(r, 0, -log(y.get(r, c)));
             }
         }
     }
 
-    return loss.mean(0).getValue(0, 0);
+    return loss.mean(0).get(0, 0);
+}
+
+Matrix crossEntropyGrad(Matrix& logits, vector<int> y_hat) {
+    Matrix dlogits = logits.softmax();
+
+    for(int r = 0; r < dlogits.getRows(); r++) {
+        for(int c = 0; c < dlogits.getCols(); c++) {
+            if(y_hat[r] == c) {
+                dlogits.set(r, c, dlogits.get(r, c) - 1);
+            }
+        }
+    }
+
+    return dlogits / y_hat.size();
 }

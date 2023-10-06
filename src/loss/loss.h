@@ -10,5 +10,6 @@
 using namespace std;
 
 double crossEntropy(Matrix& y, vector<int> y_hat);
+Matrix crossEntropyGrad(Matrix& logits, vector<int> y_hat);
 
 #endif
