@@ -21,7 +21,7 @@ class Matrix {
         int rows;
         int cols;
         void checkBounds(int row, int col, string message);
-        void checkDimensions(Matrix& other);
+        void checkDimensions(Matrix& other, string operation);
         static int MAX_THREADS;
 
     public:

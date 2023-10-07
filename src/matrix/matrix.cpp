@@ -14,9 +14,9 @@ void Matrix::checkBounds(int r, int c, string message) {
     }
 }
 
-void Matrix::checkDimensions(Matrix& other) {
+void Matrix::checkDimensions(Matrix& other, string operation) {
     if(rows != other.getRows() || cols != other.getCols()) {
-        throw invalid_argument("Matrix dimensions must match");
+        throw invalid_argument("Matrix dimensions must match. " + getShape() + " != " + other.getShape() + ", " + operation);
     }
 }
 
@@ -201,7 +201,7 @@ Matrix Matrix::operator+(Matrix& other){
     }
 
     // Adding a matrix
-    checkDimensions(other);
+    checkDimensions(other, "A + B");
 
     Matrix result(rows, cols);
 
@@ -262,7 +262,7 @@ Matrix Matrix::operator-(Matrix& other){
     }
 
     // Subtracting a matrix
-    checkDimensions(other);
+    checkDimensions(other, "A - B");
 
     Matrix result(rows, cols);
 
@@ -322,7 +322,7 @@ Matrix Matrix::operator*(Matrix& other){
         return result;
     }
 
-    checkDimensions(other);
+    checkDimensions(other, "A * B");
 
     Matrix result(rows, cols);
 
@@ -382,7 +382,7 @@ Matrix Matrix::operator/(Matrix& other){
         return result;
     }
 
-    checkDimensions(other);
+    checkDimensions(other, "A / B");
 
     Matrix result(rows, cols);
 
