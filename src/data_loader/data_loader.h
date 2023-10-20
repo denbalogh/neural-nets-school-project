@@ -28,7 +28,7 @@ class DataLoader {
     
     public:
         DataLoader(DataType type);
-        Batch getBatch();
+        Batch getBatch() const;
 };
 
 #endif

@@ -5,10 +5,10 @@ Batch::Batch(Matrix x, vector<int> y) {
     labels = y;
 }
 
-Matrix& Batch::getData() {
+Matrix& Batch::getData(){
     return data;
 }
 
-vector<int>& Batch::getLabels() {
+vector<int>& Batch::getLabels(){
     return labels;
 }

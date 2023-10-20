@@ -6,7 +6,7 @@ Layer::Layer(int fin, int fout, string activation) {
     this->activation = activation;
 }
 
-Matrix Layer::forward(Matrix& x) {
+Matrix Layer::forward(const Matrix& x) {
     hpreact = x.matmul(W) + b;
     
     if(activation == "tanh"){
@@ -21,7 +21,7 @@ Matrix Layer::forward(Matrix& x) {
     return h;
 }
 
-Matrix Layer::backward(Matrix& x, vector<int> y_hat){
+Matrix Layer::backward(const Matrix& x, const vector<int>& y_hat){
     if(activation != "softmax"){
         cout << "Need to be softmax activation" << endl;
         exit(1);
@@ -36,7 +36,7 @@ Matrix Layer::backward(Matrix& x, vector<int> y_hat){
     return dlogits.matmul(WT);
 }
 
-Matrix Layer::backward(Matrix& x, Matrix& dh){
+Matrix Layer::backward(const Matrix& x, const Matrix& dh){
     if(activation != "tanh"){
         cout << "Need to be tanh activation" << endl;
         exit(1);

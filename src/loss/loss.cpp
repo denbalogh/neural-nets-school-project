@@ -1,6 +1,6 @@
 #include "loss.h"
 
-double crossEntropy(Matrix& y, vector<int> y_hat) {
+double crossEntropy(const Matrix& y, const vector<int>& y_hat) {
     Matrix loss(y.getRows(), 1, ZEROS);
 
     for(int r = 0; r < y.getRows(); r++) {
@@ -14,7 +14,7 @@ double crossEntropy(Matrix& y, vector<int> y_hat) {
     return loss.mean(0).get(0, 0);
 }
 
-Matrix crossEntropyGrad(Matrix& logits, vector<int> y_hat) {
+Matrix crossEntropyGrad(const Matrix& logits, const vector<int>& y_hat) {
     Matrix dlogits = logits.softmax();
 
     for(int r = 0; r < dlogits.getRows(); r++) {

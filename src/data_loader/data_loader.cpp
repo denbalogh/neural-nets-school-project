@@ -34,7 +34,7 @@ DataLoader::DataLoader(DataType type) {
     fileY.close();
 }
 
-Batch DataLoader::getBatch() {
+Batch DataLoader::getBatch() const{
     vector<string> batchX;
     vector<int> batchY;
 

@@ -17,48 +17,48 @@ enum MatrixType {
 
 class Matrix {
     private:
-        double *data;
         int rows;
         int cols;
-        void checkBounds(int row, int col, string message);
-        void checkDimensions(Matrix& other, string operation);
+        double *data;
+        void checkBounds(int row, int col, string message) const;
+        void checkDimensions(const Matrix& other, string operation) const;
         static int MAX_THREADS;
 
     public:
         Matrix();
         Matrix(int rows, int cols, MatrixType type = ZEROS);
         static void setMaxThreads(int max_threads);
-        int getRows();
-        int getCols();
-        double get(int row, int col);
+        int getRows() const;
+        int getCols() const;
+        double get(int row, int col) const;
         void set(int row, int col, double value);
-        string getShape();
-        void printValues();
-        bool compareValues(Matrix& other);
+        string getShape() const;
+        void printValues() const;
+        bool isEqualTo(const Matrix& other) const;
         void initZeros();
         void initOnes();
         void initRand();
         // Operations
-        Matrix matmul(Matrix& other);
-        Matrix operator+(Matrix& other);
-        Matrix operator+(double value);
-        Matrix operator-(Matrix& other);
-        Matrix operator-(double value);
-        Matrix operator*(Matrix& other);
-        Matrix operator*(double value);
-        Matrix operator/(Matrix& other);
-        Matrix operator/(double value);
-        Matrix pow(double power);
-        Matrix exp();
-        Matrix log();
-        Matrix sum(int dim);
-        Matrix max(int dim);
-        Matrix mean(int dim);
-        Matrix transpose();
-        Matrix tanh();
-        Matrix softmax();
+        Matrix matmul(const Matrix& other) const;
+        Matrix operator+(const Matrix& other) const;
+        Matrix operator+(double value) const;
+        Matrix operator-(const Matrix& other) const;
+        Matrix operator-(double value) const;
+        Matrix operator*(const Matrix& other) const;
+        Matrix operator*(double value) const;
+        Matrix operator/(const Matrix& other) const;
+        Matrix operator/(double value) const;
+        Matrix pow(double power) const;
+        Matrix exp() const;
+        Matrix log() const;
+        Matrix sum(int dim) const;
+        Matrix max(int dim) const;
+        Matrix mean(int dim) const;
+        Matrix transpose() const;
+        Matrix tanh() const;
+        Matrix softmax() const;
 };
 
-void matmulThread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_num, Matrix& result);
+void matmulThread(const Matrix& A, const Matrix& B, int row_start, int col_start, int ops_num, Matrix& result);
 
 #endif

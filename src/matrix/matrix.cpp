@@ -8,35 +8,31 @@ void Matrix::setMaxThreads(int max_threads){
 }
 
 // helper functions
-void Matrix::checkBounds(int r, int c, string message) {
+void Matrix::checkBounds(int r, int c, string message) const{
     if(r < 0 || r >= rows || c < 0 || c >= cols) {
         throw invalid_argument("Matrix index out of bounds, " + message);
     }
 }
 
-void Matrix::checkDimensions(Matrix& other, string operation) {
+void Matrix::checkDimensions(const Matrix& other, string operation) const{
     if(rows != other.getRows() || cols != other.getCols()) {
         throw invalid_argument("Matrix dimensions must match. " + getShape() + " != " + other.getShape() + ", " + operation);
     }
 }
 
-int Matrix::getRows() {
+int Matrix::getRows() const{
     return rows;
 }
 
-int Matrix::getCols() {
+int Matrix::getCols() const{
     return cols;
 }
 
-Matrix::Matrix() {
-    rows = 0;
-    cols = 0;
-    data = NULL;
-}
+Matrix::Matrix() : rows(0), cols(0), data(NULL) {}
 
 Matrix::Matrix(int r, int c, MatrixType type) {
     if(r < 1 || c < 1) {
-        throw invalid_argument("Matrix dimensions must be positive");
+        throw invalid_argument("Matrix dimensions must be positive and non-zero");
     }
 
     rows = r;
@@ -82,7 +78,7 @@ void Matrix::initRand() {
     }
 }
 
-double Matrix::get(int r, int c) {
+double Matrix::get(int r, int c) const{
     checkBounds(r, c, "getValue: " + to_string(r) + ", " + to_string(c));
     return data[r * cols + c];
 }
@@ -92,11 +88,11 @@ void Matrix::set(int r, int c, double value) {
     data[r * cols + c] = value;
 }
 
-string Matrix::getShape() {
+string Matrix::getShape() const{
     return "(" + to_string(rows) + ", " + to_string(cols) + ")";
 }
 
-void Matrix::printValues() {
+void Matrix::printValues() const{
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
             cout << get(r, c) << " ";
@@ -105,7 +101,7 @@ void Matrix::printValues() {
     }
 }
 
-bool Matrix::compareValues(Matrix& other) {
+bool Matrix::isEqualTo(const Matrix& other) const{
     if(rows != other.getRows() || cols != other.getCols()) {
         return false;
     }
@@ -121,7 +117,7 @@ bool Matrix::compareValues(Matrix& other) {
     return true;
 }
 
-void matmulThread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_num, Matrix& result){
+void matmulThread(const Matrix& A, const Matrix& B, int row_start, int col_start, int ops_num, Matrix& result){
     for(int i = 0; i < ops_num; i++){
         int row = row_start + (col_start + i) / B.getCols();
         int col = (col_start + i) % B.getCols();
@@ -135,7 +131,7 @@ void matmulThread(Matrix& A, Matrix& B, int row_start, int col_start, int ops_nu
     }
 }
 
-Matrix Matrix::matmul(Matrix& other){
+Matrix Matrix::matmul(const Matrix& other) const{
     if(cols != other.getRows()) {
         throw invalid_argument("Matmul A @ B: cols of A must match rows of B");
     }
@@ -165,7 +161,7 @@ Matrix Matrix::matmul(Matrix& other){
     return result;
 }
 
-Matrix Matrix::operator+(Matrix& other){
+Matrix Matrix::operator+(const Matrix& other) const{
     // Adding a row vector, need to broadcast
     if(other.getRows() == 1){
         if(other.getCols() != cols){
@@ -214,7 +210,7 @@ Matrix Matrix::operator+(Matrix& other){
     return result;
 }
 
-Matrix Matrix::operator+(double value){
+Matrix Matrix::operator+(double value) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -226,7 +222,7 @@ Matrix Matrix::operator+(double value){
     return result;
 }
 
-Matrix Matrix::operator-(Matrix& other){
+Matrix Matrix::operator-(const Matrix& other) const{
     // Subtracting a row vector, need to broadcast
     if(other.getRows() == 1){
         if(other.getCols() != cols){
@@ -275,7 +271,7 @@ Matrix Matrix::operator-(Matrix& other){
     return result;
 }
 
-Matrix Matrix::operator-(double value){
+Matrix Matrix::operator-(double value) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -287,7 +283,7 @@ Matrix Matrix::operator-(double value){
     return result;
 }
 
-Matrix Matrix::operator*(Matrix& other){
+Matrix Matrix::operator*(const Matrix& other) const{
     // Multiplying a row vector, need to broadcast
     if(other.getRows() == 1){
         if(other.getCols() != cols){
@@ -335,7 +331,7 @@ Matrix Matrix::operator*(Matrix& other){
     return result;
 }
 
-Matrix Matrix::operator*(double value){
+Matrix Matrix::operator*(double value) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -347,7 +343,7 @@ Matrix Matrix::operator*(double value){
     return result;
 }
 
-Matrix Matrix::operator/(Matrix& other){
+Matrix Matrix::operator/(const Matrix& other) const{
     // Dividing a row vector, need to broadcast
     if(other.getRows() == 1){
         if(other.getCols() != cols){
@@ -395,7 +391,7 @@ Matrix Matrix::operator/(Matrix& other){
     return result;
 }
 
-Matrix Matrix::operator/(double value){
+Matrix Matrix::operator/(double value) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -407,7 +403,7 @@ Matrix Matrix::operator/(double value){
     return result;
 }
 
-Matrix Matrix::pow(double power){
+Matrix Matrix::pow(double power) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -419,7 +415,7 @@ Matrix Matrix::pow(double power){
     return result;
 }
 
-Matrix Matrix::exp(){
+Matrix Matrix::exp() const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -431,7 +427,7 @@ Matrix Matrix::exp(){
     return result;
 }
 
-Matrix Matrix::log(){
+Matrix Matrix::log() const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -443,7 +439,7 @@ Matrix Matrix::log(){
     return result;
 }
 
-Matrix Matrix::sum(int dim){
+Matrix Matrix::sum(int dim) const{
     if(dim == 0){
         Matrix result(1, cols);
 
@@ -477,7 +473,7 @@ Matrix Matrix::sum(int dim){
     }
 }
 
-Matrix Matrix::max(int dim){
+Matrix Matrix::max(int dim) const{
     if(dim == 0){
         Matrix result(1, cols);
 
@@ -515,7 +511,7 @@ Matrix Matrix::max(int dim){
     }
 }
 
-Matrix Matrix::mean(int dim){
+Matrix Matrix::mean(int dim) const{
     if(dim == 0){
         return sum(0) / rows;
     }else if(dim == 1){
@@ -525,7 +521,7 @@ Matrix Matrix::mean(int dim){
     }
 }
 
-Matrix Matrix::transpose(){
+Matrix Matrix::transpose() const{
     Matrix result(cols, rows);
 
     for(int r = 0; r < rows; r++){
@@ -537,7 +533,7 @@ Matrix Matrix::transpose(){
     return result;
 }
 
-Matrix Matrix::tanh(){
+Matrix Matrix::tanh() const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -549,7 +545,7 @@ Matrix Matrix::tanh(){
     return result;
 }
 
-Matrix Matrix::softmax(){
+Matrix Matrix::softmax() const{
     Matrix max_row_values = max(1);
     Matrix values_minus_max = *this - max_row_values;
     Matrix exp_values_minus_max = values_minus_max.exp();

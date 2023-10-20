@@ -22,9 +22,9 @@ class Layer {
     
     public:
         Layer(int fin, int fout, string activation);
-        Matrix forward(Matrix& x);
-        Matrix backward(Matrix& x, vector<int> y_hat); // softmax layer
-        Matrix backward(Matrix& x, Matrix& dh); // hidden layer
+        Matrix forward(const Matrix& x);
+        Matrix backward(const Matrix& x, const vector<int>& y_hat); // softmax layer
+        Matrix backward(const Matrix& x, const Matrix& dh); // hidden layer
         void update(double lr);
 };
 
