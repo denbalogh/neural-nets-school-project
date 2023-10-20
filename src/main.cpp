@@ -20,10 +20,11 @@ int main(int argc, char** argv) {
 
     DataLoader loader = DataLoader(TRAIN, 0.05);
 
-    int hiddenSize = 64;
-    int batchSize = 64;
-    double lr = 0.01;
+    int hiddenSize = 32;
+    int batchSize = 32;
     int iterations = 1000;
+
+    double lr = 0.01, prevValAcc = 0.0;
 
     Layer layer1 = Layer(ITEM_SIZE, hiddenSize, "tanh");
     Layer layer2 = Layer(hiddenSize, 10, "softmax");
@@ -42,9 +43,9 @@ int main(int argc, char** argv) {
         Matrix logits = layer2.forward(h);
         double loss = crossEntropy(logits, y);
 
-        cout << "Train loss: " << loss << endl;
+        cout << "i: " << i << ", train loss: " << loss << endl;
 
-        if(i % 100 == 0){
+        if(i != 0 && i % 50 == 0){
             layer1.setTrain(false);
             layer2.setTrain(false);
             Matrix valH = layer1.forward(valX);
@@ -53,6 +54,13 @@ int main(int argc, char** argv) {
             cout << "------- Val accuracy: " << valAcc << endl;
             layer1.setTrain(true);
             layer2.setTrain(true);
+
+            if(valAcc < prevValAcc){
+                lr *= 0.5;
+                cout << "------- Learning rate: " << lr << endl;
+            }
+
+            prevValAcc = valAcc;
         }
 
         //Backward pass
