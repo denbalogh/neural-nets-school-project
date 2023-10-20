@@ -7,19 +7,17 @@
 
 #include "../matrix/matrix.h"
 
-#define BATCH_SIZE 32
-
 using namespace std;
 
 class Batch {
     private:
-        Matrix data;
-        vector<int> labels;
+        Matrix X;
+        vector<int> Y;
     
     public:
-        Batch(Matrix data, vector<int> labels);
-        Matrix& getData();
-        vector<int>& getLabels();
+        Batch(Matrix X, vector<int> Y);
+        Matrix& getX();
+        vector<int>& getY();
 };
 
 #endif

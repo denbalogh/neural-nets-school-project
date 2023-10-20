@@ -25,10 +25,12 @@ class DataLoader {
     private:
         vector<string> dataX;
         vector<int> dataY;
+        int valStartIndex = TRAIN_ITEMS_COUNT - 1;
     
     public:
-        DataLoader(DataType type);
-        Batch getBatch() const;
+        DataLoader(DataType type, float val_split = 0.0);
+        Batch getTrainBatch(int batchSize) const;
+        Batch getValData() const;
 };
 
 #endif

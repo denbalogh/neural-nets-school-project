@@ -511,6 +511,48 @@ Matrix Matrix::max(int dim) const{
     }
 }
 
+Matrix Matrix::argmax(int dim) const{
+    if(dim == 0){
+        Matrix result(1, cols);
+
+        for(int c = 0; c < cols; c++){
+            double max = get(0, c);
+            int argmax = 0;
+
+            for(int r = 1; r < rows; r++){
+                if(get(r, c) > max){
+                    max = get(r, c);
+                    argmax = r;
+                }
+            }
+
+            result.set(0, c, argmax);
+        }
+
+        return result;
+    }else if(dim == 1){
+        Matrix result(rows, 1);
+
+        for(int r = 0; r < rows; r++){
+            double max = get(r, 0);
+            int argmax = 0;
+
+            for(int c = 1; c < cols; c++){
+                if(get(r, c) > max){
+                    max = get(r, c);
+                    argmax = c;
+                }
+            }
+
+            result.set(r, 0, argmax);
+        }
+
+        return result;
+    }else{
+        throw invalid_argument("Argmax dim must be 0 or 1");
+    }
+}
+
 Matrix Matrix::mean(int dim) const{
     if(dim == 0){
         return sum(0) / rows;

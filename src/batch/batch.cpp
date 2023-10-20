@@ -1,14 +1,11 @@
 #include "batch.h"
 
-Batch::Batch(Matrix x, vector<int> y) {
-    data = x;
-    labels = y;
+Batch::Batch(Matrix X, vector<int> Y) : X(X), Y(Y) {}
+
+Matrix& Batch::getX(){
+    return X;
 }
 
-Matrix& Batch::getData(){
-    return data;
-}
-
-vector<int>& Batch::getLabels(){
-    return labels;
+vector<int>& Batch::getY(){
+    return Y;
 }

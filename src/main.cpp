@@ -18,26 +18,42 @@ int main(int argc, char** argv) {
         Matrix::setMaxThreads(6);
     }
 
-    DataLoader loader = DataLoader(TRAIN);
+    DataLoader loader = DataLoader(TRAIN, 0.05);
 
-    int hidden_size = 32;
+    int hiddenSize = 64;
+    int batchSize = 64;
     double lr = 0.01;
     int iterations = 1000;
 
-    Layer layer1 = Layer(ITEM_SIZE, hidden_size, "tanh");
-    Layer layer2 = Layer(hidden_size, 10, "softmax");
+    Layer layer1 = Layer(ITEM_SIZE, hiddenSize, "tanh");
+    Layer layer2 = Layer(hiddenSize, 10, "softmax");
+
+    Batch valData = loader.getValData();
+    Matrix valX = valData.getX();
+    vector<int> valY = valData.getY();
 
     for(int i = 0; i < iterations; i++){
-        Batch batch = loader.getBatch();
-        Matrix x = batch.getData();
-        vector<int> y = batch.getLabels();
+        Batch batch = loader.getTrainBatch(batchSize);
+        Matrix x = batch.getX();
+        vector<int> y = batch.getY();
 
         // Forward pass
         Matrix h = layer1.forward(x);
         Matrix logits = layer2.forward(h);
         double loss = crossEntropy(logits, y);
 
-        cout << "Loss: " << loss << endl;
+        cout << "Train loss: " << loss << endl;
+
+        if(i % 100 == 0){
+            layer1.setTrain(false);
+            layer2.setTrain(false);
+            Matrix valH = layer1.forward(valX);
+            Matrix valLogits = layer2.forward(valH);
+            double valAcc = accuracy(valLogits, valY);
+            cout << "------- Val accuracy: " << valAcc << endl;
+            layer1.setTrain(true);
+            layer2.setTrain(true);
+        }
 
         //Backward pass
         Matrix dh = layer2.backward(h, y);

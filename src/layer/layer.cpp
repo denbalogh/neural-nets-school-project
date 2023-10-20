@@ -1,12 +1,13 @@
 #include "layer.h"
 
-Layer::Layer(int fin, int fout, string activation) {
-    W = Matrix(fin, fout, RAND);
-    b = Matrix(1, fout, RAND);
-    this->activation = activation;
+Layer::Layer(int fin, int fout, string activation): W(Matrix(fin, fout, RAND)), b(Matrix(1, fout, RAND)), activation(activation) {}
+
+void Layer::setTrain(bool train){
+    this->train = train;
 }
 
 Matrix Layer::forward(const Matrix& x) {
+    Matrix hpreact, h;
     hpreact = x.matmul(W) + b;
     
     if(activation == "tanh"){
@@ -16,6 +17,11 @@ Matrix Layer::forward(const Matrix& x) {
     } else {
         cout << "Invalid activation function" << endl;
         exit(1);
+    }
+
+    if(train){
+        this->hpreact = hpreact;
+        this->h = h;
     }
 
     return h;
@@ -33,6 +39,7 @@ Matrix Layer::backward(const Matrix& x, const vector<int>& y_hat){
     db = dlogits.sum(0);
 
     Matrix WT = W.transpose();
+
     return dlogits.matmul(WT);
 }
 
@@ -52,6 +59,7 @@ Matrix Layer::backward(const Matrix& x, const Matrix& dh){
     db = dhpreact.sum(0);
 
     Matrix WT = W.transpose();
+
     return dhpreact.matmul(WT);
 }
 

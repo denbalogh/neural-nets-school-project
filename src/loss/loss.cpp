@@ -1,5 +1,17 @@
 #include "loss.h"
 
+double accuracy(const Matrix& y, const vector<int>& y_hat) {
+    int correct = 0;
+
+    for(int r = 0; r < y.getRows(); r++) {
+        if(y_hat[r] == y.argmax(1).get(r, 0)) {
+            correct++;
+        }
+    }
+
+    return (double) correct / y.getRows();
+}
+
 double crossEntropy(const Matrix& y, const vector<int>& y_hat) {
     Matrix loss(y.getRows(), 1, ZEROS);
 

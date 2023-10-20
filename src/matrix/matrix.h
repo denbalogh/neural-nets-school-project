@@ -53,6 +53,7 @@ class Matrix {
         Matrix log() const;
         Matrix sum(int dim) const;
         Matrix max(int dim) const;
+        Matrix argmax(int dim) const;
         Matrix mean(int dim) const;
         Matrix transpose() const;
         Matrix tanh() const;

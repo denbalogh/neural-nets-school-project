@@ -9,6 +9,7 @@
 
 using namespace std;
 
+double accuracy(const Matrix& y, const vector<int>& y_hat);
 double crossEntropy(const Matrix& y, const vector<int>& y_hat);
 Matrix crossEntropyGrad(const Matrix& logits, const vector<int>& y_hat);
 

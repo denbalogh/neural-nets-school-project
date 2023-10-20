@@ -1,6 +1,6 @@
 #include "data_loader.h"
 
-DataLoader::DataLoader(DataType type) {
+DataLoader::DataLoader(DataType type, float val_split) {
     string filenameX, filenameY;
 
     if(type == TEST) {
@@ -32,22 +32,59 @@ DataLoader::DataLoader(DataType type) {
 
     fileX.close();
     fileY.close();
+
+    if(val_split > 0.0) {
+        int valCount = val_split * TRAIN_ITEMS_COUNT;
+        valStartIndex = TRAIN_ITEMS_COUNT - valCount;
+    }
 }
 
-Batch DataLoader::getBatch() const{
+Batch DataLoader::getTrainBatch(int batchSize) const{
     vector<string> batchX;
     vector<int> batchY;
 
-    for(int i = 0; i < BATCH_SIZE; i++) {
-        int index = rand() % dataX.size();
+    for(int i = 0; i < batchSize; i++) {
+        int index = rand() % valStartIndex;
         batchX.push_back(dataX[index]);
         batchY.push_back(dataY[index]);
     }
 
-    Matrix data = Matrix(BATCH_SIZE, ITEM_SIZE, ZEROS);
+    Matrix data = Matrix(batchSize, ITEM_SIZE, ZEROS);
     vector<int> labels = batchY;
 
-    for(int i = 0; i < BATCH_SIZE; i++) {
+    for(int i = 0; i < batchSize; i++) {
+        string line = batchX[i];
+        int j = 0;
+        stringstream ssin(line);
+        while(ssin.good() && j < ITEM_SIZE) {
+            string value;
+            getline(ssin, value, ',');
+            data.set(i, j, stod(value));
+            j++;
+        }
+    }
+
+    return Batch(data, labels);
+}
+
+Batch DataLoader::getValData() const{
+    if(valStartIndex == TRAIN_ITEMS_COUNT - 1) {
+        cout << "No validation data" << endl;
+        exit(1);
+    }
+
+    vector<string> batchX;
+    vector<int> batchY;
+
+    for(int i = valStartIndex; i < TRAIN_ITEMS_COUNT; i++) {
+        batchX.push_back(dataX[i]);
+        batchY.push_back(dataY[i]);
+    }
+
+    Matrix data = Matrix(batchX.size(), ITEM_SIZE, ZEROS);
+    vector<int> labels = batchY;
+
+    for(int i = 0; i < batchX.size(); i++) {
         string line = batchX[i];
         int j = 0;
         stringstream ssin(line);
