@@ -84,7 +84,7 @@ Batch DataLoader::getValData() const{
     Matrix data = Matrix(batchX.size(), ITEM_SIZE, ZEROS);
     vector<int> labels = batchY;
 
-    for(int i = 0; i < batchX.size(); i++) {
+    for(vector<string>::size_type i = 0; i < batchX.size(); i++) {
         string line = batchX[i];
         int j = 0;
         stringstream ssin(line);
