@@ -18,10 +18,10 @@ int main(int argc, char** argv) {
         Matrix::setMaxThreads(6);
     }
 
-    DataLoader loader = DataLoader(TRAIN, 0.05);
+    DataLoader loader = DataLoader(TRAIN, 0.1);
 
-    int hiddenSize = 32;
-    int batchSize = 32;
+    int hiddenSize = 512;
+    int batchSize = 512;
     int iterations = 1000;
 
     double lr = 0.01, prevValAcc = 0.0;
@@ -45,7 +45,7 @@ int main(int argc, char** argv) {
 
         cout << "i: " << i << ", train loss: " << loss << endl;
 
-        if(i != 0 && i % 50 == 0){
+        if(i != 0 && i % 20 == 0){
             layer1.setTrain(false);
             layer2.setTrain(false);
             Matrix valH = layer1.forward(valX);

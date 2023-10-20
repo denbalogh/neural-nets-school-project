@@ -7,18 +7,33 @@ void Matrix::setMaxThreads(int max_threads){
     Matrix::MAX_THREADS = max_threads;
 }
 
-// helper functions
-void Matrix::checkBounds(int r, int c, string message) const{
-    if(r < 0 || r >= rows || c < 0 || c >= cols) {
-        throw invalid_argument("Matrix index out of bounds, " + message);
+#ifdef DEBUG
+    // helper functions
+    void Matrix::checkBounds(int r, int c, string message) const{
+        if(r < 0 || r >= rows || c < 0 || c >= cols) {
+            throw invalid_argument("Matrix index out of bounds, " + message);
+        }
     }
-}
 
-void Matrix::checkDimensions(const Matrix& other, string operation) const{
-    if(rows != other.getRows() || cols != other.getCols()) {
-        throw invalid_argument("Matrix dimensions must match. " + getShape() + " != " + other.getShape() + ", " + operation);
+    void Matrix::checkDimensions(const Matrix& other, string operation) const{
+        if(rows != other.getRows() || cols != other.getCols()) {
+            throw invalid_argument("Matrix dimensions must match. " + getShape() + " != " + other.getShape() + ", " + operation);
+        }
     }
-}
+
+    string Matrix::getShape() const{
+        return "(" + to_string(rows) + ", " + to_string(cols) + ")";
+    }
+
+    void Matrix::printValues() const{
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
+                cout << get(r, c) << " ";
+            }
+            cout << endl;
+        }
+    }
+#endif
 
 int Matrix::getRows() const{
     return rows;
@@ -31,9 +46,12 @@ int Matrix::getCols() const{
 Matrix::Matrix() : rows(0), cols(0), data(NULL) {}
 
 Matrix::Matrix(int r, int c, MatrixType type) {
-    if(r < 1 || c < 1) {
-        throw invalid_argument("Matrix dimensions must be positive and non-zero");
-    }
+
+    #ifdef DEBUG
+        if(r < 1 || c < 1) {
+            throw invalid_argument("Matrix dimensions must be positive and non-zero");
+        }
+    #endif
 
     rows = r;
     cols = c;
@@ -79,32 +97,27 @@ void Matrix::initRand() {
 }
 
 double Matrix::get(int r, int c) const{
-    checkBounds(r, c, "getValue: " + to_string(r) + ", " + to_string(c));
+    #ifdef DEBUG
+        checkBounds(r, c, "getValue: " + to_string(r) + ", " + to_string(c));
+    #endif
+
     return data[r * cols + c];
 }
 
 void Matrix::set(int r, int c, double value) {
-    checkBounds(r, c, "setValue: " + to_string(r) + ", " + to_string(c));
+    #ifdef DEBUG
+        checkBounds(r, c, "setValue: " + to_string(r) + ", " + to_string(c));
+    #endif
+
     data[r * cols + c] = value;
 }
 
-string Matrix::getShape() const{
-    return "(" + to_string(rows) + ", " + to_string(cols) + ")";
-}
-
-void Matrix::printValues() const{
-    for(int r = 0; r < rows; r++) {
-        for(int c = 0; c < cols; c++) {
-            cout << get(r, c) << " ";
-        }
-        cout << endl;
-    }
-}
-
 bool Matrix::isEqualTo(const Matrix& other) const{
-    if(rows != other.getRows() || cols != other.getCols()) {
-        return false;
-    }
+    #ifdef DEBUG
+        if(rows != other.getRows() || cols != other.getCols()) {
+            return false;
+        }
+    #endif
 
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
@@ -132,9 +145,11 @@ void matmulThread(const Matrix& A, const Matrix& B, int row_start, int col_start
 }
 
 Matrix Matrix::matmul(const Matrix& other) const{
-    if(cols != other.getRows()) {
-        throw invalid_argument("Matmul A @ B: cols of A must match rows of B");
-    }
+    #ifdef DEBUG
+        if(cols != other.getRows()) {
+            throw invalid_argument("Matmul A @ B: cols of A must match rows of B");
+        }
+    #endif
 
     Matrix result(rows, other.getCols());
     vector<thread> threads;
@@ -164,9 +179,11 @@ Matrix Matrix::matmul(const Matrix& other) const{
 Matrix Matrix::operator+(const Matrix& other) const{
     // Adding a row vector, need to broadcast
     if(other.getRows() == 1){
-        if(other.getCols() != cols){
-            throw invalid_argument("When adding a vector to matrix, cols must match");
-        }
+        #ifdef DEBUG
+            if(other.getCols() != cols){
+                throw invalid_argument("When adding a vector to matrix, cols must match");
+            }
+        #endif
 
         Matrix result(rows, cols);
 
@@ -181,9 +198,11 @@ Matrix Matrix::operator+(const Matrix& other) const{
 
     // Adding a column vector, need to broadcast
     if(other.getCols() == 1){
-        if(other.getRows() != rows){
-            throw invalid_argument("When adding a column vector to matrix, rows must match");
-        }
+        #ifdef DEBUG
+            if(other.getRows() != rows){
+                throw invalid_argument("When adding a column vector to matrix, rows must match");
+            }
+        #endif
 
         Matrix result(rows, cols);
 
@@ -197,7 +216,10 @@ Matrix Matrix::operator+(const Matrix& other) const{
     }
 
     // Adding a matrix
-    checkDimensions(other, "A + B");
+
+    #ifdef DEBUG
+        checkDimensions(other, "A + B");
+    #endif
 
     Matrix result(rows, cols);
 
@@ -225,9 +247,11 @@ Matrix Matrix::operator+(double value) const{
 Matrix Matrix::operator-(const Matrix& other) const{
     // Subtracting a row vector, need to broadcast
     if(other.getRows() == 1){
-        if(other.getCols() != cols){
-            throw invalid_argument("When subtracting a vector from matrix, cols must match");
-        }
+        #ifdef DEBUG
+            if(other.getCols() != cols){
+                throw invalid_argument("When subtracting a vector from matrix, cols must match");
+            }
+        #endif
 
         Matrix result(rows, cols);
 
@@ -242,9 +266,11 @@ Matrix Matrix::operator-(const Matrix& other) const{
 
     // Subtracting a column vector, need to broadcast
     if(other.getCols() == 1){
-        if(other.getRows() != rows){
-            throw invalid_argument("When subtracting a column vector from matrix, rows must match");
-        }
+        #ifdef DEBUG
+            if(other.getRows() != rows){
+                throw invalid_argument("When subtracting a column vector from matrix, rows must match");
+            }
+        #endif
 
         Matrix result(rows, cols);
 
@@ -258,7 +284,10 @@ Matrix Matrix::operator-(const Matrix& other) const{
     }
 
     // Subtracting a matrix
-    checkDimensions(other, "A - B");
+
+    #ifdef DEBUG
+        checkDimensions(other, "A - B");
+    #endif
 
     Matrix result(rows, cols);
 
@@ -286,9 +315,11 @@ Matrix Matrix::operator-(double value) const{
 Matrix Matrix::operator*(const Matrix& other) const{
     // Multiplying a row vector, need to broadcast
     if(other.getRows() == 1){
-        if(other.getCols() != cols){
-            throw invalid_argument("When multiplying a vector to matrix, cols must match");
-        }
+        #ifdef DEBUG
+            if(other.getCols() != cols){
+                throw invalid_argument("When multiplying a vector to matrix, cols must match");
+            }
+        #endif
 
         Matrix result(rows, cols);
 
@@ -303,9 +334,11 @@ Matrix Matrix::operator*(const Matrix& other) const{
 
     // Multiplying a column vector, need to broadcast
     if(other.getCols() == 1){
-        if(other.getRows() != rows){
-            throw invalid_argument("When multiplying a column vector to matrix, rows must match");
-        }
+        #ifdef DEBUG
+            if(other.getRows() != rows){
+                throw invalid_argument("When multiplying a column vector to matrix, rows must match");
+            }
+        #endif
 
         Matrix result(rows, cols);
 
@@ -318,7 +351,11 @@ Matrix Matrix::operator*(const Matrix& other) const{
         return result;
     }
 
-    checkDimensions(other, "A * B");
+    // Multiplying a matrix
+
+    #ifdef DEBUG
+        checkDimensions(other, "A * B");
+    #endif
 
     Matrix result(rows, cols);
 
@@ -346,9 +383,11 @@ Matrix Matrix::operator*(double value) const{
 Matrix Matrix::operator/(const Matrix& other) const{
     // Dividing a row vector, need to broadcast
     if(other.getRows() == 1){
-        if(other.getCols() != cols){
-            throw invalid_argument("When dividing a vector from matrix, cols must match");
-        }
+        #ifdef DEBUG
+            if(other.getCols() != cols){
+                throw invalid_argument("When dividing a vector from matrix, cols must match");
+            }
+        #endif
 
         Matrix result(rows, cols);
 
@@ -363,9 +402,11 @@ Matrix Matrix::operator/(const Matrix& other) const{
 
     // Dividing a column vector, need to broadcast
     if(other.getCols() == 1){
-        if(other.getRows() != rows){
-            throw invalid_argument("When dividing a column vector from matrix, rows must match");
-        }
+        #ifdef DEBUG
+            if(other.getRows() != rows){
+                throw invalid_argument("When dividing a column vector from matrix, rows must match");
+            }
+        #endif
 
         Matrix result(rows, cols);
 
@@ -378,7 +419,11 @@ Matrix Matrix::operator/(const Matrix& other) const{
         return result;
     }
 
-    checkDimensions(other, "A / B");
+    // Dividing a matrix
+
+    #ifdef DEBUG
+        checkDimensions(other, "A / B");
+    #endif
 
     Matrix result(rows, cols);
 

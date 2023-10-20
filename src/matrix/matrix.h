@@ -7,6 +7,8 @@
 #include <thread>
 #include <cmath>
 
+// #define DEBUG 1
+
 using namespace std;
 
 enum MatrixType {
@@ -20,8 +22,12 @@ class Matrix {
         int rows;
         int cols;
         double *data;
-        void checkBounds(int row, int col, string message) const;
-        void checkDimensions(const Matrix& other, string operation) const;
+
+        #ifdef DEBUG
+            void checkBounds(int row, int col, string message) const;
+            void checkDimensions(const Matrix& other, string operation) const;
+        #endif
+
         static int MAX_THREADS;
 
     public:
@@ -32,8 +38,12 @@ class Matrix {
         int getCols() const;
         double get(int row, int col) const;
         void set(int row, int col, double value);
-        string getShape() const;
-        void printValues() const;
+
+        #ifdef DEBUG
+            string getShape() const;
+            void printValues() const;
+        #endif
+
         bool isEqualTo(const Matrix& other) const;
         void initZeros();
         void initOnes();
