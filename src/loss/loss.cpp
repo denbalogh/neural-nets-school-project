@@ -1,10 +1,11 @@
 #include "loss.h"
 
 double accuracy(const Matrix& y, const vector<int>& y_hat) {
+    Matrix y_argmax = y.argmax(1);
     int correct = 0;
 
     for(int r = 0; r < y.getRows(); r++) {
-        if(y_hat[r] == y.argmax(1).get(r, 0)) {
+        if(y_hat[r] == y_argmax.get(r, 0)) {
             correct++;
         }
     }
