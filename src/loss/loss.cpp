@@ -14,6 +14,13 @@ double accuracy(const Matrix& y, const vector<int>& y_hat) {
 }
 
 double crossEntropy(const Matrix& y, const vector<int>& y_hat) {
+    #ifdef DEBUG
+        if(y.getRows() != y_hat.size()) {
+            cout << "CrossEntropy: invalid dimensions - " << y.getRows() << ", " << y_hat.size() << endl;
+            exit(1);
+        }
+    #endif
+
     Matrix loss(y.getRows(), 1, ZEROS);
 
     for(int r = 0; r < y.getRows(); r++) {
@@ -27,8 +34,15 @@ double crossEntropy(const Matrix& y, const vector<int>& y_hat) {
     return loss.mean(0).get(0, 0);
 }
 
-Matrix crossEntropyGrad(const Matrix& logits, const vector<int>& y_hat) {
-    Matrix dlogits = logits.softmax();
+Matrix crossEntropyGrad(const Matrix& probs, const vector<int>& y_hat) {
+    #ifdef DEBUG
+        if(probs.getRows() != y_hat.size()) {
+            cout << "CrossEntropyGrad: invalid dimensions - " << probs.getRows() << ", " << y_hat.size() << endl;
+            exit(1);
+        }
+    #endif
+
+    Matrix dlogits = probs.clone();
 
     for(int r = 0; r < dlogits.getRows(); r++) {
         for(int c = 0; c < dlogits.getCols(); c++) {

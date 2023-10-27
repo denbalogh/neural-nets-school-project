@@ -112,6 +112,18 @@ void Matrix::set(int r, int c, double value) {
     data[r * cols + c] = value;
 }
 
+Matrix Matrix::clone() const{
+    Matrix result(rows, cols);
+
+    for(int r = 0; r < rows; r++) {
+        for(int c = 0; c < cols; c++) {
+            result.set(r, c, get(r, c));
+        }
+    }
+
+    return result;
+}
+
 bool Matrix::isEqualTo(const Matrix& other) const{
     #ifdef DEBUG
         if(rows != other.getRows() || cols != other.getCols()) {

@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 
+#include "../debug.h"
 #include "../matrix/matrix.h"
 #include "../loss/loss.h"
 

@@ -28,12 +28,14 @@ Matrix Layer::forward(const Matrix& x) {
 }
 
 Matrix Layer::backward(const Matrix& x, const vector<int>& y_hat){
-    if(activation != "softmax"){
-        cout << "Need to be softmax activation" << endl;
-        exit(1);
-    }
+    #ifdef DEBUG
+        if(activation != "softmax"){
+            cout << "Need to be softmax activation" << endl;
+            exit(1);
+        }
+    #endif
 
-    Matrix dlogits = crossEntropyGrad(hpreact, y_hat);
+    Matrix dlogits = crossEntropyGrad(h, y_hat);
 
     dW = x.transpose().matmul(dlogits);
     db = dlogits.sum(0);
@@ -44,10 +46,12 @@ Matrix Layer::backward(const Matrix& x, const vector<int>& y_hat){
 }
 
 Matrix Layer::backward(const Matrix& x, const Matrix& dh){
-    if(activation != "tanh"){
-        cout << "Need to be tanh activation" << endl;
-        exit(1);
-    }
+    #ifdef DEBUG
+        if(activation != "tanh"){
+            cout << "Need to be tanh activation" << endl;
+            exit(1);
+        }
+    #endif
 
     Matrix hAsOnes = Matrix(h.getRows(), h.getCols(), ONES);
     Matrix hPow2 = h.pow(2);

@@ -68,10 +68,12 @@ Batch DataLoader::getTrainBatch(int batchSize) const{
 }
 
 Batch DataLoader::getValData() const{
-    if(valStartIndex == TRAIN_ITEMS_COUNT - 1) {
-        cout << "No validation data" << endl;
-        exit(1);
-    }
+    #ifdef DEBUG
+        if(valStartIndex == TRAIN_ITEMS_COUNT - 1) {
+            cout << "No validation data" << endl;
+            exit(1);
+        }
+    #endif
 
     vector<string> batchX;
     vector<int> batchY;

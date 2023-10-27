@@ -7,7 +7,7 @@
 #include <thread>
 #include <cmath>
 
-// #define DEBUG 1
+#include "../debug.h"
 
 using namespace std;
 
@@ -38,6 +38,7 @@ class Matrix {
         int getCols() const;
         double get(int row, int col) const;
         void set(int row, int col, double value);
+        Matrix clone() const;
 
         #ifdef DEBUG
             string getShape() const;
