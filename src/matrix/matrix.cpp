@@ -35,27 +35,12 @@ void Matrix::setMaxThreads(int max_threads){
     }
 #endif
 
-int Matrix::getRows() const{
-    return rows;
-}
-
-int Matrix::getCols() const{
-    return cols;
-}
-
-Matrix::Matrix() : rows(0), cols(0), data(NULL) {}
-
-Matrix::Matrix(int r, int c, MatrixType type) {
-
+Matrix::Matrix(int r, int c, MatrixType type): rows(r), cols(c), data(new double[r * c]{ 0.0 }){
     #ifdef DEBUG
         if(r < 1 || c < 1) {
             throw invalid_argument("Matrix dimensions must be positive and non-zero");
         }
     #endif
-
-    rows = r;
-    cols = c;
-    data = new double[r * c]{ 0.0 }; // Initialize all values to 0.0
 
     switch(type) {
         case ONES:

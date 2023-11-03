@@ -19,9 +19,9 @@ enum MatrixType {
 
 class Matrix {
     private:
-        int rows;
-        int cols;
-        double *data;
+        int rows = 0;
+        int cols = 0;
+        double *data = NULL;
 
         #ifdef DEBUG
             void checkBounds(int row, int col, string message) const;
@@ -31,11 +31,11 @@ class Matrix {
         static int MAX_THREADS;
 
     public:
-        Matrix();
+        Matrix(){};
         Matrix(int rows, int cols, MatrixType type = ZEROS);
         static void setMaxThreads(int max_threads);
-        int getRows() const;
-        int getCols() const;
+        int getRows() const { return rows; };
+        int getCols() const { return cols; };
         double get(int row, int col) const;
         void set(int row, int col, double value);
         Matrix clone() const;
