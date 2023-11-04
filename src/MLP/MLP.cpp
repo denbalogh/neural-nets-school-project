@@ -11,7 +11,7 @@ MLP::MLP(int fin, int hiddenSize, int nHiddenLayers, int fout, string hiddenActi
 }
 
 void MLP::setTrain(bool train) {
-    for(int i = 0; i < layers.size(); i++) {
+    for(int i = 0; i < (int)layers.size(); i++) {
         layers[i].setTrain(train);
     }
 }
@@ -19,7 +19,7 @@ void MLP::setTrain(bool train) {
 Matrix MLP::forward(const Matrix& x) {
     Matrix h = x;
 
-    for(int i = 0; i < layers.size(); i++) {
+    for(int i = 0; i < (int)layers.size(); i++) {
         h = layers[i].forward(h);
     }
 
@@ -28,7 +28,7 @@ Matrix MLP::forward(const Matrix& x) {
 
 void MLP::backward(const Matrix& x, const vector<int>& y_hat) {
     Matrix dh = layers[layers.size() - 1].backward(layers[layers.size() - 2].getH(), y_hat);
-    for(int i = layers.size() - 2; i >= 0; i--) {
+    for(int i = (int)layers.size() - 2; i >= 0; i--) {
         if(i > 0){
             dh = layers[i].backward(layers[i - 1].getH(), dh);
         } else {
@@ -38,7 +38,7 @@ void MLP::backward(const Matrix& x, const vector<int>& y_hat) {
 }
 
 void MLP::update(double lr) {
-    for(int i = 0; i < layers.size(); i++) {
+    for(int i = 0; i < (int)layers.size(); i++) {
         layers[i].update(lr);
     }
 }

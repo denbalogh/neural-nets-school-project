@@ -19,11 +19,11 @@ int main(int argc, char** argv) {
         Matrix::setMaxThreads(6);
     }
 
-    DataLoader loader = DataLoader(TRAIN, 0.1);
+    DataLoader trainLoader = DataLoader(TRAIN, 0.1), testLoader = DataLoader(TEST);
 
     // Hyperparameters
     int batchSize = 256;
-    int hiddenSize = 64;
+    int hiddenSize = 128;
     int nHiddenLayers = 3;
 
     // Training parameters
@@ -36,17 +36,21 @@ int main(int argc, char** argv) {
 
     MLP network = MLP(ITEM_SIZE, hiddenSize, nHiddenLayers, 10, "tanh", "softmax");
 
-    Batch valData = loader.getValData();
+    Batch valData = trainLoader.getValData();
     Matrix valX = valData.getX().normalize();
     vector<int> valY = valData.getY();
 
+    Batch batch;
+    Matrix x, logits, valLogits;
+    vector<int> y;
+
     for(int i = 0; i < iterations; i++){
-        Batch batch = loader.getTrainBatch(batchSize);
-        Matrix x = batch.getX().normalize();
-        vector<int> y = batch.getY();
+        batch = trainLoader.getTrainBatch(batchSize);
+        x = batch.getX().normalize();
+        y = batch.getY();
 
         // Forward pass
-        Matrix logits = network.forward(x);
+        logits = network.forward(x);
         double loss = crossEntropy(logits, y);
 
         cout << "i: " << i << ", train loss: " << loss << endl;
@@ -54,7 +58,7 @@ int main(int argc, char** argv) {
         if(i != 0 && i % 20 == 0){
             network.setTrain(false);
 
-            Matrix valLogits = network.forward(valX);
+            valLogits = network.forward(valX);
             double valAcc = accuracy(valLogits, valY);
             cout << "------- Val accuracy: " << valAcc << endl;
 
@@ -82,6 +86,15 @@ int main(int argc, char** argv) {
         // Update weights
         network.update(lr);
     }
+
+    // Test set evaluation
+    network.setTrain(false);
+    Batch testData = testLoader.getAllData();
+    Matrix testX = testData.getX().normalize();
+    vector<int> testY = testData.getY();
+    Matrix testLogits = network.forward(testX); 
+    double testAcc = accuracy(testLogits, testY);
+    cout << "------- Test accuracy: " << testAcc << endl;
 
     return 0;
 }

@@ -15,6 +15,7 @@ class Batch {
         vector<int> Y;
     
     public:
+        Batch() {};
         Batch(Matrix X, vector<int> Y): X(X), Y(Y) {};
         Matrix& getX() { return X; };
         vector<int>& getY() { return Y; };

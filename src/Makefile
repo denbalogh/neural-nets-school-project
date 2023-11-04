@@ -1,4 +1,4 @@
-FLAGS = -std=c++17 -Wall -pedantic
+FLAGS = -std=c++17 -Wall -pedantic -O3
 
 network: main.o matrix.o data_loader.o batch/batch.h loss.o layer.o MLP.o
 	g++ $(FLAGS) main.o matrix.o data_loader.o loss.o layer.o MLP.o -o network

@@ -100,3 +100,22 @@ Batch DataLoader::getValData() const{
 
     return Batch(data, labels);
 }
+
+Batch DataLoader::getAllData() const{
+    Matrix data = Matrix(dataX.size(), ITEM_SIZE, ZEROS);
+    vector<int> labels = dataY;
+
+    for(vector<string>::size_type i = 0; i < dataX.size(); i++) {
+        string line = dataX[i];
+        int j = 0;
+        stringstream ssin(line);
+        while(ssin.good() && j < ITEM_SIZE) {
+            string value;
+            getline(ssin, value, ',');
+            data.set(i, j, stod(value));
+            j++;
+        }
+    }
+
+    return Batch(data, labels);
+}

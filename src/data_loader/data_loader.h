@@ -32,6 +32,7 @@ class DataLoader {
         DataLoader(DataType type, float val_split = 0.0);
         Batch getTrainBatch(int batchSize) const;
         Batch getValData() const;
+        Batch getAllData() const;
 };
 
 #endif
