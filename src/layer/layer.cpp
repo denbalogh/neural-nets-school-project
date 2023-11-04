@@ -1,7 +1,7 @@
 #include "layer.h"
 
 Layer::Layer(int fin, int fout, string activation): 
-W(Matrix(fin, fout, 0, 1.0 / sqrt(fin))), 
+W(Matrix(fin, fout, 0, sqrt(2) / sqrt(activation == "relu" ? fin : fin + fout))), 
 b(Matrix(1, fout, ZEROS)),
 activation(activation),
 rW(Matrix(fin, fout, ONES)),
