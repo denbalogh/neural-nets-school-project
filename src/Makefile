@@ -1,7 +1,7 @@
 FLAGS = -std=c++17 -Wall -pedantic
 
-network: main.o matrix.o data_loader.o batch/batch.h loss.o layer.o
-	g++ $(FLAGS) main.o matrix.o data_loader.o loss.o layer.o -o network
+network: main.o matrix.o data_loader.o batch/batch.h loss.o layer.o MLP.o
+	g++ $(FLAGS) main.o matrix.o data_loader.o loss.o layer.o MLP.o -o network
 
 main.o: main.cpp
 	g++ $(FLAGS) -c main.cpp
@@ -17,6 +17,9 @@ loss.o: loss/loss.cpp loss/loss.h debug.h
 
 layer.o: layer/layer.cpp layer/layer.h debug.h
 	g++ $(FLAGS) -c layer/layer.cpp
+
+MLP.o: MLP/MLP.cpp MLP/MLP.h debug.h
+	g++ $(FLAGS) -c MLP/MLP.cpp
 
 clean:
 	rm *.o network

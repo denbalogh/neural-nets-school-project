@@ -34,6 +34,7 @@ class Layer {
         Matrix backward(const Matrix& x, const Matrix& dh); // hidden layer
         void update(double lr);
         void setTrain(bool train);
+        Matrix getH() const { return h; }
 };
 
 #endif

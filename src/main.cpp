@@ -5,6 +5,7 @@
 #include "batch/batch.h"
 #include "loss/loss.h"
 #include "layer/layer.h"
+#include "MLP/MLP.h"
 
 using namespace std;
 using namespace std::chrono;
@@ -20,15 +21,20 @@ int main(int argc, char** argv) {
 
     DataLoader loader = DataLoader(TRAIN, 0.1);
 
-    int hiddenSize = 1024;
+    // Hyperparameters
     int batchSize = 256;
-    int iterations = 1000;
+    int hiddenSize = 64;
+    int nHiddenLayers = 3;
 
-    double lr = 0.001, prevValAcc = 0.0;
+    // Training parameters
+    int iterations = 1000;
+    double lr = 0.001;
+
+    // Helper variables
+    double prevValAcc = 0.0;
     int prevValLessCount = 0;
 
-    Layer layer1 = Layer(ITEM_SIZE, hiddenSize, "tanh");
-    Layer layer2 = Layer(hiddenSize, 10, "softmax");
+    MLP network = MLP(ITEM_SIZE, hiddenSize, nHiddenLayers, 10, "tanh", "softmax");
 
     Batch valData = loader.getValData();
     Matrix valX = valData.getX().normalize();
@@ -40,21 +46,19 @@ int main(int argc, char** argv) {
         vector<int> y = batch.getY();
 
         // Forward pass
-        Matrix h = layer1.forward(x);
-        Matrix logits = layer2.forward(h);
+        Matrix logits = network.forward(x);
         double loss = crossEntropy(logits, y);
 
         cout << "i: " << i << ", train loss: " << loss << endl;
 
         if(i != 0 && i % 20 == 0){
-            layer1.setTrain(false);
-            layer2.setTrain(false);
-            Matrix valH = layer1.forward(valX);
-            Matrix valLogits = layer2.forward(valH);
+            network.setTrain(false);
+
+            Matrix valLogits = network.forward(valX);
             double valAcc = accuracy(valLogits, valY);
             cout << "------- Val accuracy: " << valAcc << endl;
-            layer1.setTrain(true);
-            layer2.setTrain(true);
+
+            network.setTrain(true);
 
             if(valAcc <= prevValAcc){
                 lr *= 0.5;
@@ -73,12 +77,10 @@ int main(int argc, char** argv) {
         }
 
         //Backward pass
-        Matrix dh = layer2.backward(h, y);
-        layer1.backward(x, dh);
+        network.backward(x, y);
 
         // Update weights
-        layer1.update(lr);
-        layer2.update(lr);
+        network.update(lr);
     }
 
     return 0;
