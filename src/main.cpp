@@ -34,7 +34,7 @@ int main(int argc, char** argv) {
     double prevValAcc = 0.0;
     int prevValLessCount = 0;
 
-    MLP network = MLP(ITEM_SIZE, hiddenSize, nHiddenLayers, 10, "tanh", "softmax");
+    MLP network = MLP(ITEM_SIZE, hiddenSize, nHiddenLayers, 10, "relu", "softmax");
 
     Batch valData = trainLoader.getValData();
     Matrix valX = valData.getX().normalize();

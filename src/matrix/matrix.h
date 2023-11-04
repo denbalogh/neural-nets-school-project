@@ -70,6 +70,9 @@ class Matrix {
         Matrix std(int dim) const;
         Matrix transpose() const;
         Matrix tanh() const;
+        Matrix dTanh() const;
+        Matrix relu() const;
+        Matrix dRelu() const;
         Matrix softmax() const;
         Matrix normalize() const;
 };

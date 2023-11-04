@@ -668,6 +668,42 @@ Matrix Matrix::tanh() const{
     return result;
 }
 
+Matrix Matrix::dTanh() const{
+    return Matrix(rows, cols, ONES) - pow(2);
+}
+
+Matrix Matrix::relu() const{
+    Matrix result(rows, cols);
+
+    for(int r = 0; r < rows; r++){
+        for(int c = 0; c < cols; c++){
+            if(get(r, c) > 0){
+                result.set(r, c, get(r, c));
+            }else{
+                result.set(r, c, 0.0);
+            }
+        }
+    }
+
+    return result;
+}
+
+Matrix Matrix::dRelu() const{
+    Matrix result(rows, cols);
+
+    for(int r = 0; r < rows; r++){
+        for(int c = 0; c < cols; c++){
+            if(get(r, c) > 0){
+                result.set(r, c, 1.0);
+            }else{
+                result.set(r, c, 0.0);
+            }
+        }
+    }
+
+    return result;
+}
+
 Matrix Matrix::softmax() const{
     Matrix max_row_values = max(1);
     Matrix values_minus_max = *this - max_row_values;

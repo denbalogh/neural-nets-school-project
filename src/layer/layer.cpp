@@ -17,6 +17,8 @@ Matrix Layer::forward(const Matrix& x) {
     
     if(activation == "tanh"){
         h = hpreact.tanh();
+    } else if(activation == "relu"){
+        h = hpreact.relu();
     } else if(activation == "softmax"){
         h = hpreact.softmax();
     } else {
@@ -52,17 +54,20 @@ Matrix Layer::backward(const Matrix& x, const vector<int>& y_hat){
 
 Matrix Layer::backward(const Matrix& x, const Matrix& dh){
     #ifdef DEBUG
-        if(activation != "tanh"){
-            cout << "Need to be tanh activation" << endl;
+        if(activation != "tanh" && activation != "relu"){
+            cout << "Need to be tanh or relu activation" << endl;
             exit(1);
         }
     #endif
 
-    Matrix hAsOnes = Matrix(h.getRows(), h.getCols(), ONES);
-    Matrix hPow2 = h.pow(2);
+    Matrix dhpreact;
 
-    Matrix hAsOnesMinusHPow2 = hAsOnes - hPow2;
-    Matrix dhpreact = dh * hAsOnesMinusHPow2;
+    if(activation == "tanh"){
+        dhpreact = dh * h.dTanh();
+    } else {
+        //Relu
+        dhpreact = dh * h.dRelu();
+    }
 
     dW = x.transpose().matmul(dhpreact);
     db = dhpreact.sum(0);
