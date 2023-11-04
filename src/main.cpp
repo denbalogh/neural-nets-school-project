@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
             prevValAcc = valAcc;
         }
 
-        if(prevValLessCount >= 3){
+        if(prevValLessCount >= 2){
             cout << "------- Early stopping" << endl;
             break;
         }
