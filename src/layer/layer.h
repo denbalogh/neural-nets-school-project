@@ -11,6 +11,9 @@
 
 using namespace std;
 
+#define RO 0.9
+#define SIGMA 1e-8
+
 class Layer {
     private:
         Matrix W;
@@ -20,6 +23,8 @@ class Layer {
         Matrix h;
         Matrix dW;
         Matrix db;
+        Matrix rW;
+        Matrix rb;
         bool train = true;
     
     public:

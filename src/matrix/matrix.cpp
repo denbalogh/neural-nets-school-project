@@ -42,16 +42,19 @@ Matrix::Matrix(int r, int c, MatrixType type): rows(r), cols(c), data(new double
         }
     #endif
 
-    switch(type) {
-        case ONES:
-            initOnes();
-            break;
-        case RAND:
-            initRand();
-            break;
-        default:
-            break;
+    if(type == ONES){
+        initOnes();
     }
+}
+
+Matrix::Matrix(int r, int c, double mean, double std): rows(r), cols(c), data(new double[r * c]{ 0.0 }){
+    #ifdef DEBUG
+        if(r < 1 || c < 1) {
+            throw invalid_argument("Matrix dimensions must be positive and non-zero");
+        }
+    #endif
+
+    initNormal(mean, std);
 }
 
 void Matrix::initZeros() {
@@ -70,13 +73,13 @@ void Matrix::initOnes() {
     }
 }
 
-void Matrix::initRand() {
-    srand(time(NULL));
+void Matrix::initNormal(double mean, double std) {
+    default_random_engine generator;
+    normal_distribution<double> distribution(mean, std);
 
-    // initialize random values between -0.01 and 0.01
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
-            set(r, c, (double)rand() / RAND_MAX * 0.02 - 0.01);
+            set(r, c, distribution(generator));
         }
     }
 }
@@ -605,6 +608,42 @@ Matrix Matrix::mean(int dim) const{
     }
 }
 
+Matrix Matrix::std(int dim) const{
+    if(dim == 0){
+        Matrix mean = this->mean(0);
+        Matrix result(1, cols);
+
+        for(int c = 0; c < cols; c++){
+            double sum = 0.0;
+
+            for(int r = 0; r < rows; r++){
+                sum += std::pow(get(r, c) - mean.get(0, c), 2);
+            }
+
+            result.set(0, c, sqrt(sum / rows));
+        }
+
+        return result;
+    }else if(dim == 1){
+        Matrix mean = this->mean(1);
+        Matrix result(rows, 1);
+
+        for(int r = 0; r < rows; r++){
+            double sum = 0.0;
+
+            for(int c = 0; c < cols; c++){
+                sum += std::pow(get(r, c) - mean.get(r, 0), 2);
+            }
+
+            result.set(r, 0, sqrt(sum / cols));
+        }
+
+        return result;
+    }else{
+        throw invalid_argument("Std dim must be 0 or 1");
+    }
+}
+
 Matrix Matrix::transpose() const{
     Matrix result(cols, rows);
 
@@ -635,6 +674,20 @@ Matrix Matrix::softmax() const{
     Matrix exp_values_minus_max = values_minus_max.exp();
     Matrix sum_exp_values_minus_max = exp_values_minus_max.sum(1);
     Matrix result = exp_values_minus_max / sum_exp_values_minus_max;
+
+    return result;
+}
+
+Matrix Matrix::normalize() const{
+    Matrix mean = this->mean(1);
+    Matrix std = this->std(1);
+    Matrix result(rows, cols);
+
+    for(int r = 0; r < rows; r++){
+        for(int c = 0; c < cols; c++){
+            result.set(r, c, (get(r, c) - mean.get(r, 0)) / std.get(r, 0));
+        }
+    }
 
     return result;
 }

@@ -20,22 +20,23 @@ int main(int argc, char** argv) {
 
     DataLoader loader = DataLoader(TRAIN, 0.1);
 
-    int hiddenSize = 512;
-    int batchSize = 512;
+    int hiddenSize = 1024;
+    int batchSize = 256;
     int iterations = 1000;
 
-    double lr = 0.01, prevValAcc = 0.0;
+    double lr = 0.001, prevValAcc = 0.0;
+    int prevValLessCount = 0;
 
     Layer layer1 = Layer(ITEM_SIZE, hiddenSize, "tanh");
     Layer layer2 = Layer(hiddenSize, 10, "softmax");
 
     Batch valData = loader.getValData();
-    Matrix valX = valData.getX();
+    Matrix valX = valData.getX().normalize();
     vector<int> valY = valData.getY();
 
     for(int i = 0; i < iterations; i++){
         Batch batch = loader.getTrainBatch(batchSize);
-        Matrix x = batch.getX();
+        Matrix x = batch.getX().normalize();
         vector<int> y = batch.getY();
 
         // Forward pass
@@ -55,12 +56,20 @@ int main(int argc, char** argv) {
             layer1.setTrain(true);
             layer2.setTrain(true);
 
-            if(valAcc < prevValAcc){
+            if(valAcc <= prevValAcc){
                 lr *= 0.5;
                 cout << "------- Learning rate: " << lr << endl;
+                prevValLessCount++;
+            } else {
+                prevValLessCount = 0;
             }
 
             prevValAcc = valAcc;
+        }
+
+        if(prevValLessCount >= 3){
+            cout << "------- Early stopping" << endl;
+            break;
         }
 
         //Backward pass

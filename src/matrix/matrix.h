@@ -6,6 +6,7 @@
 #include <vector>
 #include <thread>
 #include <cmath>
+#include <random>
 
 #include "../debug.h"
 
@@ -14,7 +15,6 @@ using namespace std;
 enum MatrixType {
     ZEROS,
     ONES,
-    RAND
 };
 
 class Matrix {
@@ -33,6 +33,7 @@ class Matrix {
     public:
         Matrix(){};
         Matrix(int rows, int cols, MatrixType type = ZEROS);
+        Matrix(int rows, int cols, double mean, double std);
         static void setMaxThreads(int max_threads);
         int getRows() const { return rows; };
         int getCols() const { return cols; };
@@ -48,7 +49,7 @@ class Matrix {
         bool isEqualTo(const Matrix& other) const;
         void initZeros();
         void initOnes();
-        void initRand();
+        void initNormal(double mean, double std);
         // Operations
         Matrix matmul(const Matrix& other) const;
         Matrix operator+(const Matrix& other) const;
@@ -66,9 +67,11 @@ class Matrix {
         Matrix max(int dim) const;
         Matrix argmax(int dim) const;
         Matrix mean(int dim) const;
+        Matrix std(int dim) const;
         Matrix transpose() const;
         Matrix tanh() const;
         Matrix softmax() const;
+        Matrix normalize() const;
 };
 
 void matmulThread(const Matrix& A, const Matrix& B, int row_start, int col_start, int ops_num, Matrix& result);

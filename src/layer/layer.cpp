@@ -1,6 +1,11 @@
 #include "layer.h"
 
-Layer::Layer(int fin, int fout, string activation): W(Matrix(fin, fout, RAND)), b(Matrix(1, fout, RAND)), activation(activation) {}
+Layer::Layer(int fin, int fout, string activation): 
+W(Matrix(fin, fout, 0, 1.0 / sqrt(fin))), 
+b(Matrix(1, fout, ZEROS)),
+activation(activation),
+rW(Matrix(fin, fout, ONES)),
+rb(Matrix(1, fout, ONES)) {}
 
 void Layer::setTrain(bool train){
     this->train = train;
@@ -68,8 +73,12 @@ Matrix Layer::backward(const Matrix& x, const Matrix& dh){
 }
 
 void Layer::update(double lr){
-    dW = dW * lr;
-    db = db * lr;
+    // RMSProp method
+    rW = rW * RO + dW.pow(2) * (1 - RO);
+    dW = (rW + SIGMA).pow(-0.5) * dW * lr;
+
+    rb = rb * RO + db.pow(2) * (1 - RO);
+    db = (rb + SIGMA).pow(-0.5) * db * lr;
 
     W = W - dW;
     b = b - db;
