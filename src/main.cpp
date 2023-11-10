@@ -40,17 +40,13 @@ int main(int argc, char** argv) {
     Matrix valX = valData.getX().normalize();
     vector<int> valY = valData.getY();
 
-    Batch batch;
-    Matrix x, logits, valLogits;
-    vector<int> y;
-
     for(int i = 0; i < iterations; i++){
-        batch = trainLoader.getTrainBatch(batchSize);
-        x = batch.getX().normalize();
-        y = batch.getY();
+        Batch batch = trainLoader.getTrainBatch(batchSize);
+        Matrix x = batch.getX().normalize();
+        vector<int> y = batch.getY();
 
         // Forward pass
-        logits = network.forward(x);
+        Matrix logits = network.forward(x);
         double loss = crossEntropy(logits, y);
 
         cout << "i: " << i << ", train loss: " << loss << endl;
@@ -58,7 +54,7 @@ int main(int argc, char** argv) {
         if(i != 0 && i % 20 == 0){
             network.setTrain(false);
 
-            valLogits = network.forward(valX);
+            Matrix valLogits = network.forward(valX);
             double valAcc = accuracy(valLogits, valY);
             cout << "------- Val accuracy: " << valAcc << endl;
 

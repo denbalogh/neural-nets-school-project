@@ -21,7 +21,7 @@ class Matrix {
     private:
         int rows = 0;
         int cols = 0;
-        double *data = NULL;
+        vector<double> data;
 
         #ifdef DEBUG
             void checkBounds(int row, int col, string message) const;
@@ -47,8 +47,6 @@ class Matrix {
         #endif
 
         bool isEqualTo(const Matrix& other) const;
-        void initZeros();
-        void initOnes();
         void initNormal(double mean, double std);
         // Operations
         Matrix matmul(const Matrix& other) const;

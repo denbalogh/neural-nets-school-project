@@ -35,42 +35,25 @@ void Matrix::setMaxThreads(int max_threads){
     }
 #endif
 
-Matrix::Matrix(int r, int c, MatrixType type): rows(r), cols(c), data(new double[r * c]{ 0.0 }){
+Matrix::Matrix(int r, int c, MatrixType type): rows(r), cols(c){
     #ifdef DEBUG
         if(r < 1 || c < 1) {
             throw invalid_argument("Matrix dimensions must be positive and non-zero");
         }
     #endif
 
-    if(type == ONES){
-        initOnes();
-    }
+    data = vector<double>(r * c, type == ONES ? 1.0 : 0.0);
 }
 
-Matrix::Matrix(int r, int c, double mean, double std): rows(r), cols(c), data(new double[r * c]{ 0.0 }){
+Matrix::Matrix(int r, int c, double mean, double std): rows(r), cols(c){
     #ifdef DEBUG
         if(r < 1 || c < 1) {
             throw invalid_argument("Matrix dimensions must be positive and non-zero");
         }
     #endif
 
+    data = vector<double>(r * c, 0.0);
     initNormal(mean, std);
-}
-
-void Matrix::initZeros() {
-    for(int r = 0; r < rows; r++) {
-        for(int c = 0; c < cols; c++) {
-            set(r, c, 0.0);
-        }
-    }
-}
-
-void Matrix::initOnes() {
-    for(int r = 0; r < rows; r++) {
-        for(int c = 0; c < cols; c++) {
-            set(r, c, 1.0);
-        }
-    }
 }
 
 void Matrix::initNormal(double mean, double std) {
