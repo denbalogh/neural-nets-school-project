@@ -14,3 +14,7 @@ echo "     RUNNING     "
 echo "#################"
 
 nice -n 19 ./network aura
+
+echo "##############"
+echo "     DONE     "
+echo "##############"

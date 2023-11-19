@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     // Hyperparameters
     int batchSize = 256;
     int hiddenSize = 1024;
-    int nHiddenLayers = 4;
+    int nHiddenLayers = 5;
 
     // Training parameters
     int iterations = 1000;
