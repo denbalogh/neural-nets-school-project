@@ -33,6 +33,24 @@ void Matrix::setMaxThreads(int max_threads){
             cout << endl;
         }
     }
+
+    bool Matrix::isEqualTo(const Matrix& other) const{
+        #ifdef DEBUG
+            if(rows != other.getRows() || cols != other.getCols()) {
+                return false;
+            }
+        #endif
+
+        for(int r = 0; r < rows; r++) {
+            for(int c = 0; c < cols; c++) {
+                if(get(r, c) != other.get(r, c)) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 #endif
 
 Matrix::Matrix(int r, int c, MatrixType type): rows(r), cols(c){
@@ -93,24 +111,6 @@ Matrix Matrix::clone() const{
     }
 
     return result;
-}
-
-bool Matrix::isEqualTo(const Matrix& other) const{
-    #ifdef DEBUG
-        if(rows != other.getRows() || cols != other.getCols()) {
-            return false;
-        }
-    #endif
-
-    for(int r = 0; r < rows; r++) {
-        for(int c = 0; c < cols; c++) {
-            if(get(r, c) != other.get(r, c)) {
-                return false;
-            }
-        }
-    }
-
-    return true;
 }
 
 void matmulThread(const Matrix& A, const Matrix& B, int row_start, int col_start, int ops_num, Matrix& result){

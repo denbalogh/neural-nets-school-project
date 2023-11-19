@@ -6,16 +6,17 @@
 #include "loss/loss.h"
 #include "layer/layer.h"
 #include "MLP/MLP.h"
+#include "utils/utils.h"
 
 using namespace std;
 using namespace std::chrono;
 
 int main(int argc, char** argv) {
     if(argc == 2 && string(argv[1]) == "aura"){
-         // Aura has 128 cores
-        Matrix::setMaxThreads(128);
+         // Aura has 256 threads
+        Matrix::setMaxThreads(256);
     } else {
-        // My laptop has 6 cores
+        // My laptop has 6 threads
         Matrix::setMaxThreads(6);
     }
 
@@ -83,14 +84,26 @@ int main(int argc, char** argv) {
         network.update(lr);
     }
 
-    // Test set evaluation
-    network.setTrain(false);
+    // Final evaluation and predictions saving
     Batch testData = testLoader.getAllData();
     Matrix testX = testData.getX().normalize();
     vector<int> testY = testData.getY();
-    Matrix testLogits = network.forward(testX); 
-    double testAcc = accuracy(testLogits, testY);
+
+    network.setTrain(false);
+    Matrix testPredictions = network.forward(testX);
+
+    // Test set evaluation
+    double testAcc = accuracy(testPredictions, testY);
     cout << "------- Test accuracy: " << testAcc << endl;
+
+    Batch trainData = trainLoader.getAllData();
+    Matrix trainX = trainData.getX().normalize();
+    Matrix trainPredictions = network.forward(trainX); 
+
+    cout << "------- Saving predictions......." << endl;
+    // Save predictions
+    savePredictions(trainPredictions, "../train_predictions.csv");
+    savePredictions(testPredictions, "../test_predictions.csv");
 
     return 0;
 }

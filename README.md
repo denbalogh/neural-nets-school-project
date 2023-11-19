@@ -1,4 +1,4 @@
-521569 - Denis Balogh
+521560 - Denis Balogh
 
 ## PV021 project -- Deep Learning from Scratch
 

@@ -44,9 +44,9 @@ class Matrix {
         #ifdef DEBUG
             string getShape() const;
             void printValues() const;
+            bool isEqualTo(const Matrix& other) const;
         #endif
 
-        bool isEqualTo(const Matrix& other) const;
         void initNormal(double mean, double std);
         // Operations
         Matrix matmul(const Matrix& other) const;
