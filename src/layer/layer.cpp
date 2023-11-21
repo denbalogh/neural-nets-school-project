@@ -77,7 +77,7 @@ Matrix Layer::backward(const Matrix& x, const Matrix& dh){
     return dhpreact.matmul(WT);
 }
 
-void Layer::update(double lr){
+void Layer::update(float lr){
     // RMSProp method
     rW = rW * RO + dW.pow(2) * (1 - RO);
     dW = (rW + SIGMA).pow(-0.5) * dW * lr;

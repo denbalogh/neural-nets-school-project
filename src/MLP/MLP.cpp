@@ -37,7 +37,7 @@ void MLP::backward(const Matrix& x, const vector<int>& y_hat) {
     }
 }
 
-void MLP::update(double lr) {
+void MLP::update(float lr) {
     for(int i = 0; i < (int)layers.size(); i++) {
         layers[i].update(lr);
     }

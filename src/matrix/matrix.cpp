@@ -60,23 +60,23 @@ Matrix::Matrix(int r, int c, MatrixType type): rows(r), cols(c){
         }
     #endif
 
-    data = vector<double>(r * c, type == ONES ? 1.0 : 0.0);
+    data = vector<float>(r * c, type == ONES ? 1.0 : 0.0);
 }
 
-Matrix::Matrix(int r, int c, double mean, double std): rows(r), cols(c){
+Matrix::Matrix(int r, int c, float mean, float std): rows(r), cols(c){
     #ifdef DEBUG
         if(r < 1 || c < 1) {
             throw invalid_argument("Matrix dimensions must be positive and non-zero");
         }
     #endif
 
-    data = vector<double>(r * c, 0.0);
+    data = vector<float>(r * c, 0.0);
     initNormal(mean, std);
 }
 
-void Matrix::initNormal(double mean, double std) {
+void Matrix::initNormal(float mean, float std) {
     default_random_engine generator;
-    normal_distribution<double> distribution(mean, std);
+    normal_distribution<float> distribution(mean, std);
 
     for(int r = 0; r < rows; r++) {
         for(int c = 0; c < cols; c++) {
@@ -85,7 +85,7 @@ void Matrix::initNormal(double mean, double std) {
     }
 }
 
-double Matrix::get(int r, int c) const{
+float Matrix::get(int r, int c) const{
     #ifdef DEBUG
         checkBounds(r, c, "getValue: " + to_string(r) + ", " + to_string(c));
     #endif
@@ -93,7 +93,7 @@ double Matrix::get(int r, int c) const{
     return data[r * cols + c];
 }
 
-void Matrix::set(int r, int c, double value) {
+void Matrix::set(int r, int c, float value) {
     #ifdef DEBUG
         checkBounds(r, c, "setValue: " + to_string(r) + ", " + to_string(c));
     #endif
@@ -117,7 +117,7 @@ void matmulThread(const Matrix& A, const Matrix& B, int row_start, int col_start
     for(int i = 0; i < ops_num; i++){
         int row = row_start + (col_start + i) / B.getCols();
         int col = (col_start + i) % B.getCols();
-        double sum = 0.0;
+        float sum = 0.0;
 
         for(int j = 0; j < A.getCols(); j++){
             sum += A.get(row, j) * B.get(j, col);
@@ -215,7 +215,7 @@ Matrix Matrix::operator+(const Matrix& other) const{
     return result;
 }
 
-Matrix Matrix::operator+(double value) const{
+Matrix Matrix::operator+(float value) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -283,7 +283,7 @@ Matrix Matrix::operator-(const Matrix& other) const{
     return result;
 }
 
-Matrix Matrix::operator-(double value) const{
+Matrix Matrix::operator-(float value) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -351,7 +351,7 @@ Matrix Matrix::operator*(const Matrix& other) const{
     return result;
 }
 
-Matrix Matrix::operator*(double value) const{
+Matrix Matrix::operator*(float value) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -419,7 +419,7 @@ Matrix Matrix::operator/(const Matrix& other) const{
     return result;
 }
 
-Matrix Matrix::operator/(double value) const{
+Matrix Matrix::operator/(float value) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -431,7 +431,7 @@ Matrix Matrix::operator/(double value) const{
     return result;
 }
 
-Matrix Matrix::pow(double power) const{
+Matrix Matrix::pow(float power) const{
     Matrix result(rows, cols);
 
     for(int r = 0; r < rows; r++){
@@ -472,7 +472,7 @@ Matrix Matrix::sum(int dim) const{
         Matrix result(1, cols);
 
         for(int c = 0; c < cols; c++){
-            double sum = 0.0;
+            float sum = 0.0;
 
             for(int r = 0; r < rows; r++){
                 sum += get(r, c);
@@ -486,7 +486,7 @@ Matrix Matrix::sum(int dim) const{
         Matrix result(rows, 1);
 
         for(int r = 0; r < rows; r++){
-            double sum = 0.0;
+            float sum = 0.0;
 
             for(int c = 0; c < cols; c++){
                 sum += get(r, c);
@@ -506,7 +506,7 @@ Matrix Matrix::max(int dim) const{
         Matrix result(1, cols);
 
         for(int c = 0; c < cols; c++){
-            double max = get(0, c);
+            float max = get(0, c);
 
             for(int r = 1; r < rows; r++){
                 if(get(r, c) > max){
@@ -522,7 +522,7 @@ Matrix Matrix::max(int dim) const{
         Matrix result(rows, 1);
 
         for(int r = 0; r < rows; r++){
-            double max = get(r, 0);
+            float max = get(r, 0);
 
             for(int c = 1; c < cols; c++){
                 if(get(r, c) > max){
@@ -544,7 +544,7 @@ Matrix Matrix::argmax(int dim) const{
         Matrix result(1, cols);
 
         for(int c = 0; c < cols; c++){
-            double max = get(0, c);
+            float max = get(0, c);
             int argmax = 0;
 
             for(int r = 1; r < rows; r++){
@@ -562,7 +562,7 @@ Matrix Matrix::argmax(int dim) const{
         Matrix result(rows, 1);
 
         for(int r = 0; r < rows; r++){
-            double max = get(r, 0);
+            float max = get(r, 0);
             int argmax = 0;
 
             for(int c = 1; c < cols; c++){
@@ -597,7 +597,7 @@ Matrix Matrix::std(int dim) const{
         Matrix result(1, cols);
 
         for(int c = 0; c < cols; c++){
-            double sum = 0.0;
+            float sum = 0.0;
 
             for(int r = 0; r < rows; r++){
                 sum += std::pow(get(r, c) - mean.get(0, c), 2);
@@ -612,7 +612,7 @@ Matrix Matrix::std(int dim) const{
         Matrix result(rows, 1);
 
         for(int r = 0; r < rows; r++){
-            double sum = 0.0;
+            float sum = 0.0;
 
             for(int c = 0; c < cols; c++){
                 sum += std::pow(get(r, c) - mean.get(r, 0), 2);

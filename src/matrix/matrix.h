@@ -21,7 +21,7 @@ class Matrix {
     private:
         int rows = 0;
         int cols = 0;
-        vector<double> data;
+        vector<float> data;
 
         #ifdef DEBUG
             void checkBounds(int row, int col, string message) const;
@@ -33,12 +33,12 @@ class Matrix {
     public:
         Matrix(){};
         Matrix(int rows, int cols, MatrixType type = ZEROS);
-        Matrix(int rows, int cols, double mean, double std);
+        Matrix(int rows, int cols, float mean, float std);
         static void setMaxThreads(int max_threads);
         int getRows() const { return rows; };
         int getCols() const { return cols; };
-        double get(int row, int col) const;
-        void set(int row, int col, double value);
+        float get(int row, int col) const;
+        void set(int row, int col, float value);
         Matrix clone() const;
 
         #ifdef DEBUG
@@ -47,18 +47,18 @@ class Matrix {
             bool isEqualTo(const Matrix& other) const;
         #endif
 
-        void initNormal(double mean, double std);
+        void initNormal(float mean, float std);
         // Operations
         Matrix matmul(const Matrix& other) const;
         Matrix operator+(const Matrix& other) const;
-        Matrix operator+(double value) const;
+        Matrix operator+(float value) const;
         Matrix operator-(const Matrix& other) const;
-        Matrix operator-(double value) const;
+        Matrix operator-(float value) const;
         Matrix operator*(const Matrix& other) const;
-        Matrix operator*(double value) const;
+        Matrix operator*(float value) const;
         Matrix operator/(const Matrix& other) const;
-        Matrix operator/(double value) const;
-        Matrix pow(double power) const;
+        Matrix operator/(float value) const;
+        Matrix pow(float power) const;
         Matrix exp() const;
         Matrix log() const;
         Matrix sum(int dim) const;

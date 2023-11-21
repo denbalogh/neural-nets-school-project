@@ -29,10 +29,10 @@ int main(int argc, char** argv) {
 
     // Training parameters
     int iterations = 1000;
-    double lr = 0.001;
+    float lr = 0.001;
 
     // Helper variables
-    double prevValAcc = 0.0;
+    float prevValAcc = 0.0;
     int prevValLessCount = 0;
 
     MLP network = MLP(ITEM_SIZE, hiddenSize, nHiddenLayers, 10, "relu", "softmax");
@@ -48,7 +48,7 @@ int main(int argc, char** argv) {
 
         // Forward pass
         Matrix logits = network.forward(x);
-        double loss = crossEntropy(logits, y);
+        float loss = crossEntropy(logits, y);
 
         cout << "i: " << i << ", train loss: " << loss << endl;
 
@@ -56,7 +56,7 @@ int main(int argc, char** argv) {
             network.setTrain(false);
 
             Matrix valLogits = network.forward(valX);
-            double valAcc = accuracy(valLogits, valY);
+            float valAcc = accuracy(valLogits, valY);
             cout << "------- Val accuracy: " << valAcc << endl;
 
             network.setTrain(true);
@@ -93,7 +93,7 @@ int main(int argc, char** argv) {
     Matrix testPredictions = network.forward(testX);
 
     // Test set evaluation
-    double testAcc = accuracy(testPredictions, testY);
+    float testAcc = accuracy(testPredictions, testY);
     cout << "------- Test accuracy: " << testAcc << endl;
 
     Batch trainData = trainLoader.getAllData();

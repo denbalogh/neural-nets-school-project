@@ -1,6 +1,6 @@
 #include "loss.h"
 
-double accuracy(const Matrix& y, const vector<int>& y_hat) {
+float accuracy(const Matrix& y, const vector<int>& y_hat) {
     Matrix y_argmax = y.argmax(1);
     int correct = 0;
 
@@ -10,10 +10,10 @@ double accuracy(const Matrix& y, const vector<int>& y_hat) {
         }
     }
 
-    return (double) correct / y.getRows();
+    return (float) correct / y.getRows();
 }
 
-double crossEntropy(const Matrix& y, const vector<int>& y_hat) {
+float crossEntropy(const Matrix& y, const vector<int>& y_hat) {
     #ifdef DEBUG
         if(y.getRows() != y_hat.size()) {
             cout << "CrossEntropy: invalid dimensions - " << y.getRows() << ", " << y_hat.size() << endl;

@@ -10,8 +10,8 @@
 
 using namespace std;
 
-double accuracy(const Matrix& y, const vector<int>& y_hat);
-double crossEntropy(const Matrix& y, const vector<int>& y_hat);
+float accuracy(const Matrix& y, const vector<int>& y_hat);
+float crossEntropy(const Matrix& y, const vector<int>& y_hat);
 Matrix crossEntropyGrad(const Matrix& probs, const vector<int>& y_hat);
 
 #endif

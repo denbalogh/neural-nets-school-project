@@ -18,7 +18,7 @@ class MLP {
         void setTrain(bool train);
         Matrix forward(const Matrix& x);
         void backward(const Matrix& x, const vector<int>& y_hat);
-        void update(double lr);
+        void update(float lr);
 };
 
 #endif
