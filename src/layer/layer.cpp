@@ -1,9 +1,11 @@
 #include "layer.h"
 
 Layer::Layer(int fin, int fout, string activation): 
+// Properly initialize weights and biases
 W(Matrix(fin, fout, 0, sqrt(2) / sqrt(activation == "relu" ? fin : fin + fout))), 
 b(Matrix(1, fout, ZEROS)),
 activation(activation),
+// RMSProp variables
 rW(Matrix(fin, fout, ONES)),
 rb(Matrix(1, fout, ONES)) {}
 
@@ -15,9 +17,7 @@ Matrix Layer::forward(const Matrix& x) {
     Matrix hpreact, h;
     hpreact = x.matmul(W) + b;
     
-    if(activation == "tanh"){
-        h = hpreact.tanh();
-    } else if(activation == "relu"){
+    if(activation == "relu"){
         h = hpreact.relu();
     } else if(activation == "softmax"){
         h = hpreact.softmax();
@@ -26,6 +26,7 @@ Matrix Layer::forward(const Matrix& x) {
         exit(1);
     }
 
+    // Save these values for backpropagation during training
     if(train){
         this->hpreact = hpreact;
         this->h = h;
@@ -44,37 +45,32 @@ Matrix Layer::backward(const Matrix& x, const vector<int>& y_hat){
 
     Matrix dlogits = crossEntropyGrad(h, y_hat);
 
+    // These expressions for gradients were derived based on this video from Andrej Karpathy:
+    // https://youtu.be/q8SA3rM6ckI?t=2505
+
     dW = x.transpose().matmul(dlogits);
     db = dlogits.sum(0);
 
-    Matrix WT = W.transpose();
-
-    return dlogits.matmul(WT);
+    return dlogits.matmul(W.transpose());
 }
 
 Matrix Layer::backward(const Matrix& x, const Matrix& dh){
     #ifdef DEBUG
-        if(activation != "tanh" && activation != "relu"){
-            cout << "Need to be tanh or relu activation" << endl;
+        if(activation != "relu"){
+            cout << "Need to be relu activation" << endl;
             exit(1);
         }
     #endif
 
-    Matrix dhpreact;
+    Matrix dhpreact = dh * h.dRelu();
 
-    if(activation == "tanh"){
-        dhpreact = dh * h.dTanh();
-    } else {
-        //Relu
-        dhpreact = dh * h.dRelu();
-    }
+    // These expressions for gradients were derived based on this video from Andrej Karpathy:
+    // https://youtu.be/q8SA3rM6ckI?t=2505
 
     dW = x.transpose().matmul(dhpreact);
     db = dhpreact.sum(0);
 
-    Matrix WT = W.transpose();
-
-    return dhpreact.matmul(WT);
+    return dhpreact.matmul(W.transpose());
 }
 
 void Layer::update(float lr){

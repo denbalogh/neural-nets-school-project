@@ -42,6 +42,9 @@ Matrix crossEntropyGrad(const Matrix& probs, const vector<int>& y_hat) {
         }
     #endif
 
+    // This expression for gradient was derived based on this video from Andrej Karpathy:
+    // https://youtu.be/q8SA3rM6ckI?t=5317
+
     Matrix dlogits = probs.clone();
 
     for(int r = 0; r < dlogits.getRows(); r++) {

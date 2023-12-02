@@ -67,12 +67,10 @@ class Matrix {
         Matrix mean(int dim) const;
         Matrix std(int dim) const;
         Matrix transpose() const;
-        Matrix tanh() const;
-        Matrix dTanh() const;
+        Matrix normalize() const;
         Matrix relu() const;
         Matrix dRelu() const;
         Matrix softmax() const;
-        Matrix normalize() const;
 };
 
 void matmulThread(const Matrix& A, const Matrix& B, int row_start, int col_start, int ops_num, Matrix& result);

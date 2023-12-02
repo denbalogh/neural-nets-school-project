@@ -639,22 +639,6 @@ Matrix Matrix::transpose() const{
     return result;
 }
 
-Matrix Matrix::tanh() const{
-    Matrix result(rows, cols);
-
-    for(int r = 0; r < rows; r++){
-        for(int c = 0; c < cols; c++){
-            result.set(r, c, std::tanh(get(r, c)));
-        }
-    }
-
-    return result;
-}
-
-Matrix Matrix::dTanh() const{
-    return Matrix(rows, cols, ONES) - pow(2);
-}
-
 Matrix Matrix::relu() const{
     Matrix result(rows, cols);
 
@@ -688,25 +672,12 @@ Matrix Matrix::dRelu() const{
 }
 
 Matrix Matrix::softmax() const{
-    Matrix max_row_values = max(1);
-    Matrix values_minus_max = *this - max_row_values;
-    Matrix exp_values_minus_max = values_minus_max.exp();
-    Matrix sum_exp_values_minus_max = exp_values_minus_max.sum(1);
-    Matrix result = exp_values_minus_max / sum_exp_values_minus_max;
-
-    return result;
+    // Subtracting max for numerical stability
+    Matrix exp_values_minus_max = (*this - max(1)).exp();
+    return exp_values_minus_max / exp_values_minus_max.sum(1);
 }
 
+// Normalize each row to have mean 0 and std 1
 Matrix Matrix::normalize() const{
-    Matrix mean = this->mean(1);
-    Matrix std = this->std(1);
-    Matrix result(rows, cols);
-
-    for(int r = 0; r < rows; r++){
-        for(int c = 0; c < cols; c++){
-            result.set(r, c, (get(r, c) - mean.get(r, 0)) / std.get(r, 0));
-        }
-    }
-
-    return result;
+    return (*this - mean(1)) / std(1);
 }

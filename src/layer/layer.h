@@ -11,6 +11,8 @@
 
 using namespace std;
 
+// RMSProp hyperparameters
+
 #define RO 0.9
 #define SIGMA 1e-8
 

@@ -25,7 +25,7 @@ int main(int argc, char** argv) {
     // Hyperparameters
     int batchSize = 256;
     int hiddenSize = 1024;
-    int nHiddenLayers = 5;
+    int nHiddenLayers = 3;
 
     // Training parameters
     int iterations = 1000;
@@ -37,26 +37,28 @@ int main(int argc, char** argv) {
 
     MLP network = MLP(ITEM_SIZE, hiddenSize, nHiddenLayers, 10, "relu", "softmax");
 
-    Batch valData = trainLoader.getValData();
-    Matrix valX = valData.getX().normalize();
-    vector<int> valY = valData.getY();
+    // Allocate memory for training
+    Batch batch, valData = trainLoader.getValData();
+    Matrix x, logits, valLogits, valX = valData.getX().normalize();
+    vector<int> y, valY = valData.getY();
+    float loss, valAcc;
 
     for(int i = 0; i < iterations; i++){
-        Batch batch = trainLoader.getTrainBatch(batchSize);
-        Matrix x = batch.getX().normalize();
-        vector<int> y = batch.getY();
+        batch = trainLoader.getTrainBatch(batchSize);
+        x = batch.getX().normalize();
+        y = batch.getY();
 
         // Forward pass
-        Matrix logits = network.forward(x);
-        float loss = crossEntropy(logits, y);
+        logits = network.forward(x);
+        loss = crossEntropy(logits, y);
 
         cout << "i: " << i << ", train loss: " << loss << endl;
 
         if(i != 0 && i % 20 == 0){
             network.setTrain(false);
 
-            Matrix valLogits = network.forward(valX);
-            float valAcc = accuracy(valLogits, valY);
+            valLogits = network.forward(valX);
+            valAcc = accuracy(valLogits, valY);
             cout << "------- Val accuracy: " << valAcc << endl;
 
             network.setTrain(true);
