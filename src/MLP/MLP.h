@@ -1,7 +1,6 @@
 #ifndef MLP_H
 #define MLP_H
 
-#include <iostream>
 #include <vector>
 #include <string>
 
